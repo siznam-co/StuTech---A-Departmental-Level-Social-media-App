@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_white">
+
+    <RelativeLayout
+        android:id="@+id/top_layout_menu_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="15dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_pic_menu_fragment"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/nav_header_desc"
+            android:src="@drawable/my_profile_pic"
+            android:layout_marginTop="7dp"/>
+
+        <TextView
+            android:id="@+id/user_name_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:text="@string/nav_header_title"
+            android:layout_marginLeft="8dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@+id/profile_pic_menu_fragment"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <TextView
+            android:id="@+id/tap_to_view_profile_menu_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="Tap to View Profile"
+            android:layout_toEndOf="@id/profile_pic_menu_fragment"
+            android:layout_below="@+id/user_name_menu_fragment"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/line_between"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/top_layout_menu_fragment"
+        android:background="@color/color_grey"/>
+
+    <LinearLayout
+        android:id="@+id/bottom_layout_menu_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/line_between"
+        android:orientation="vertical"
+        android:background="@color/color_white">
+        <Button
+            android:id="@+id/button_upload_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_between"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:text="  Uploads"
+            android:textSize="16sp"
+            android:textColor="@color/color_black"
+            android:drawableStart="@drawable/ic_menu_gallery"
+            android:textAllCaps="false"
+            android:textAlignment="textStart"/>
+        <Button
+            android:id="@+id/button_settings_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_between"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:text="  Settings"
+            android:textSize="16sp"
+            android:textColor="@color/color_black"
+            android:drawableStart="@drawable/ic_settings_black_24dp"
+            android:textAllCaps="false"
+            android:textAlignment="textStart"/>
+        <Button
+            android:id="@+id/button_logout_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_between"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:textColor="@color/color_black"
+            android:textSize="16sp"
+            android:drawableStart="@drawable/ic_exit_to_app_black_24dp"
+            android:text="  Logout"
+            android:textAllCaps="false"
+            android:textAlignment="textStart"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

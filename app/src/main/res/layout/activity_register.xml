@@ -1,0 +1,340 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".RegisterActivity">
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"/>
+
+    <ScrollView
+        android:id="@+id/register_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/Register_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/RegisterLogo"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/my_profile_pic"
+                    android:layout_centerHorizontal="true"
+                    android:padding="5dp"
+                    android:background="@drawable/register_image_border"/>
+
+                <ImageView
+                    android:id="@+id/img_button_click"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_add_a_photo_black_24dp"
+                    android:layout_alignBottom="@+id/RegisterLogo"
+                    android:layout_alignEnd="@id/RegisterLogo"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/register_name_emf_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/RegisterLogo"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginTop="12dp">
+
+                    <EditText
+                        android:id="@+id/RegisterUserName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:background="@drawable/edittext_button_style_rounded"
+                        android:hint="@string/register_name_hint"
+                        android:layout_below="@+id/RegisterLogo" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/register_email_emf_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/register_name_emf_layout"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+                    <EditText
+                        android:id="@+id/RegisterEmailText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:background="@drawable/edittext_button_style_rounded"
+                        android:layout_below="@+id/RegisterUserName"
+                        android:layout_centerHorizontal="true"
+                        android:hint="@string/email_hint"
+                        android:inputType="textEmailAddress" />
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/register_password_emf_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/register_email_emf_layout"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/RegisterPasswordText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:background="@drawable/edittext_button_style_rounded"
+                        android:layout_centerHorizontal="true"
+                        android:hint="@string/password_hint"
+                        android:inputType="textPassword" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/semester_spinner_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/register_password_emf_layout"
+                    android:background="@drawable/edittext_button_style_rounded"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/semester_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_below="@+id/RegisterDesignation"
+                        android:autofillHints="Select Semester">
+                    </Spinner>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/register_subjects_checklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_grey"
+                    android:visibility="visible"
+                    android:layout_marginTop="5sp"
+                    android:orientation="vertical"
+                    android:layout_below="@+id/semester_spinner_layout">
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/register_subject_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text=""
+                    android:layout_marginBottom="5dp"
+                    android:padding="10dp"
+                    android:visibility="gone"
+                    android:background="@drawable/popup_edittext_style"
+                    android:layout_below="@+id/register_subjects_checklist"/>
+
+
+                <RadioGroup
+                    android:id="@+id/RegisterDesignation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/register_subject_panel"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edittext_button_style_rounded">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Designation:"
+                        android:textSize="20sp"
+                        android:layout_marginLeft="5sp"/>
+                    <RadioButton
+                        android:id="@+id/radioTeacher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/teacher_hint"
+                        android:textSize="18sp"
+                        android:onClick="selectDesignation"/>
+
+                    <RadioButton
+                        android:id="@+id/radioStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/student_hint"
+                        android:textSize="18sp"
+                        android:onClick="selectDesignation"/>
+
+                </RadioGroup>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/Register_Student_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Register_details"
+                android:visibility="gone"><!--will be show if STUDENT radio button is selected-->
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/Register_roll_no_emf_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+                    <EditText
+                        android:id="@+id/Register_roll_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:layout_centerHorizontal="true"
+                        android:hint="@string/university_enrollment_no_hint"
+                        android:background="@drawable/edittext_button_style_rounded"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/section_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/Register_roll_no_emf_layout"
+                    android:background="@drawable/edittext_button_style_rounded"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/section_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:autofillHints="Select Section">
+                    </Spinner>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/session_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/section_layout"
+                    android:background="@drawable/edittext_button_style_rounded"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/batch_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:autofillHints="Select Batch">
+                    </Spinner>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/Register_Teacher_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Register_Student_form"
+                android:visibility="gone"><!--will be show if TEACHER radio button is selected-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/register_TeacherId_emf_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+                    <EditText
+                        android:id="@+id/Register_Teacher_id_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:layout_centerHorizontal="true"
+                        android:hint="@string/teacher_id_no_hint"
+                        android:background="@drawable/edittext_button_style_rounded"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/teacher_sections_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="Select Sections"
+                    android:layout_below="@id/register_TeacherId_emf_layout"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/color_black"/>
+                <LinearLayout
+                    android:id="@+id/register_section_checklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_grey"
+                    android:visibility="visible"
+                    android:layout_marginTop="5sp"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/teacher_sections_heading">
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/register_section_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="10dp"
+                    android:visibility="gone"
+                    android:background="@drawable/popup_edittext_style"
+                    android:layout_below="@+id/register_section_checklist"/>
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/Distance_bw"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_below="@id/Register_Teacher_form"
+                android:orientation="vertical">
+
+            </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/register_button_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Distance_bw">
+                <Button
+                    android:id="@+id/Register_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/rounded_button"
+                    android:text="@string/register_hint"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:layout_marginTop="20sp" />
+
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

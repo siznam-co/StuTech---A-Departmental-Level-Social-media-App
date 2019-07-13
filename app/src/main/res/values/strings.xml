@@ -1,0 +1,155 @@
+<resources>
+    <string name="app_name">stuTech</string>
+    <string name="title_activity_upload">UploadActivity</string>
+    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">StuTech</string>
+    <string name="nav_header_subtitle">FahadMushtaaq@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login2">Sign in</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="uploads">UPLOADS</string>
+    <string name="input_error_name">Enter Valid Name</string>
+    <string name="input_error_email">Enter your email.</string>
+    <string name="input_error_email_invalid">You have entered an invalid email address. Please enter the correct email and try again.</string>
+    <string name="input_error_password">You have entered an invalid username or password. Please enter the correct details and try again. Don\'t forget that the password is case sensitive.</string>
+    <string name="input_error_password_length">Password is too weak. Please enter atlease 8 characters.</string>
+    <string name="Registration_success">Registeration Successful</string>
+    <string name="Registration_fail">Sorry! Registration Failed!</string>
+    <string name="k2sSolutionProject">A project of K2S Solutions</string>
+    <string name="register_name_hint">Enter Your Full name</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_hint">Login</string>
+    <string name="register_here_hint">Haven\'t login yet? Register here!</string>
+    <string name="teacher_hint">Teacher</string>
+    <string name="student_hint">Student</string>
+    <string name="register_hint">Register</string>
+    <string name="login_failed">"Wrong email or password! Please try again! If you have not registered yet, tap on Register here!"</string>
+    <string name="remember_checkbox">Remember me</string>
+    <string name="university_enrollment_no_hint">University Enrollment no</string>
+    <string name="teacher_id_no_hint">Teacher ID no:</string>
+    <string name="subject_show_hint">Subject</string>
+    <string-array name="all_semester">
+        <item>Select Semester</item>
+        <item>1st</item>
+        <item>2nd</item>
+        <item>3rd</item>
+        <item>4th</item>
+        <item>5th</item>
+        <item>6th</item>
+        <item>7th</item>
+        <item>8th</item>
+    </string-array>
+
+    <string-array name="all_batch">
+        <item>Select Session</item>
+        <item>2013</item>
+        <item>2014</item>
+        <item>2015</item>
+        <item>2016</item>
+        <item>2017</item>
+        <item>2018</item>
+        <item>2019</item>
+    </string-array>
+
+    <string-array name="all_sections">
+        <item>Select Section</item>
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>E1</item>
+        <item>E2</item>
+    </string-array>
+
+    <string-array name="teacher_sections">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>E1</item>
+        <item>E2</item>
+    </string-array>
+
+    <string-array name="First">
+        <item>I2C</item>
+        <item>Electronics</item>
+        <item>Calculus</item>
+        <item>English</item>
+        <item>Islamiat</item>
+        <item>Pak-Studies</item>
+    </string-array>
+    <string-array name="Second">
+        <item>Programming-fundamentals</item>
+        <item>Digital-Logic-Desgin</item>
+        <item>Linear-algebra</item>
+        <item>Communication-Skills</item>
+        <item>Statistics</item>
+    </string-array>
+    <string-array name="Third">
+        <item>OOP</item>
+        <item>Discrete-Structures</item>
+        <item>Financial-Accounting</item>
+        <item>Multivariate-Calculus</item>
+        <item>Cognitive-Psychology</item>
+    </string-array>
+    <string-array name="Fourth">
+        <item>Data-Structures</item>
+        <item>Assembly-language</item>
+        <item>Visual-Programming</item>
+        <item>Logical-Paradigms</item>
+        <item>Differential-Equations</item>
+    </string-array>
+    <string-array name="Fifth">
+        <item>DBMS</item>
+        <item>DBMS-Lab</item>
+        <item>DAA</item>
+        <item>DCN</item>
+        <item>Theory-of-Automata</item>
+        <item>Operational-Research</item>
+        <item>Professionals-Practices</item>
+    </string-array>
+    <string-array name="Sixth">
+        <item>Software-Engineering</item>
+        <item>Operating-System</item>
+        <item>Artificial-Intelligence</item>
+        <item>Compiler-Construction</item>
+        <item>Foreign-Language</item>
+    </string-array>
+    <string-array name="Seventh">
+        <item>Web-Engineering</item>
+        <item>OOAD</item>
+        <item>HCI</item>
+        <item>SQA</item>
+        <item>Computer-Architecture</item>
+        <item>PPL</item>
+        <item>Computer-Vision</item>
+        <item>Project</item>
+    </string-array>
+    <string-array name="Eighth">
+        <item>Data-Warehouse</item>
+        <item>Information-Secturity</item>
+        <item>Numerical-Computation</item>
+        <item>IPR</item>
+        <item>Data-Mining</item>
+        <item>NLP</item>
+        <item>Project</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    >
+
+</resources>

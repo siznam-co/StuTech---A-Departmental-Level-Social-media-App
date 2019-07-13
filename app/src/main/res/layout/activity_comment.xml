@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CommentActivity"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/action_bar_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/comment_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorAccent"
+            app:title="Comments"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/add_comment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/action_bar_comment">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/post_detail_currentuser_img"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/my_profile_pic" />
+
+        <EditText
+
+            android:id="@+id/post_detail_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/post_detail_add_comment_btn"
+            android:layout_toEndOf="@+id/post_detail_currentuser_img"
+            android:background="@drawable/edittext_button_style_rounded"
+            android:hint="Type Comment..."
+            android:inputType="textPersonName"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/post_detail_add_comment_btn"
+            android:layout_width="35dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_send_black_24dp" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/commentRV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_grey"
+        android:layout_below="@+id/add_comment_layout"
+        android:layout_marginTop="7dp"/>
+
+</RelativeLayout>

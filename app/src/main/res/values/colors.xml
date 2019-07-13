@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2F85ED</color>
+    <color name="colorPrimaryDark">#2F80ED</color>
+    <color name="colorAccent">#2F80ED</color>
+    <color name="frag_color">#D81B60</color>
+    <color name="splashText">#FF1B7AD8</color>
+    <color name="colorTextBackground">#f4f4f4</color>
+    <color name="RegisterHere">#0421D8</color>
+    <color name="color_grey">#DFDBDB</color>
+    <color name="color_black">#000000</color>
+    <color name="color_white">#FFFFFFFF</color>
+    <color name="color_red">#E71000</color>
+</resources>

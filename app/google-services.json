@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "964504702271",
+    "firebase_url": "https://stutech2.firebaseio.com",
+    "project_id": "stutech2",
+    "storage_bucket": "stutech2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964504702271:android:2f83e06336d04cab",
+        "android_client_info": {
+          "package_name": "com.example.aabi.stutech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964504702271-mmn3jplfrjaft6cppoe9e8qqlpk4q1lb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aabi.stutech",
+            "certificate_hash": "0f36003223d61c246ce98b9e1f868d9239275352"
+          }
+        },
+        {
+          "client_id": "964504702271-9ftfucdj1ouv37g32k71sb16tanf5637.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8vRVOaKsmKwlmCqa5qsqqwpRNT5MPPRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964504702271-9ftfucdj1ouv37g32k71sb16tanf5637.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NotificationFragment"
+    android:background="@color/color_white">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/action_bar_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/profile_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorAccent"
+            app:title="profile"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_below="@id/action_bar_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:padding="6dp">
+
+        <RelativeLayout
+            android:id="@+id/profile_detail_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:layout_alignParentTop="true"
+                android:cropToPadding="false"
+                android:src="@drawable/my_profile_pic"
+                android:layout_marginStart="10dp"/>
+
+            <ImageView
+                android:id="@+id/btn_edit_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_edit"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_alignParentEnd="true"
+                tools:targetApi="lollipop"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_pic"
+                android:layout_marginTop="20sp"
+                android:text="User name"
+                android:textAllCaps="false"
+                android:textSize="25sp"
+                android:textColor="@color/color_black"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp" />
+
+            <TextView
+                android:id="@+id/profile_user_designation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_name"
+                android:text="Designation"
+                android:textAllCaps="false"
+                android:layout_marginTop="3sp"
+                android:layout_marginStart="10dp" />
+
+            <TextView
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/profile_user_designation"
+                android:background="@color/color_black"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/basic_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line1"
+                android:text="Basic Info:"
+                android:textAllCaps="false"
+                android:textSize="25sp"
+                android:layout_marginTop="3sp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/color_black"/>
+
+            <TextView
+                android:id="@+id/profile_roll_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/basic_info"
+                android:text="112"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/roll_no_heading_below"
+                android:layout_marginTop="3sp"/>
+
+            <TextView
+                android:id="@+id/roll_no_heading_below"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Roll # "
+                android:textSize="20dp"
+                android:layout_marginStart="50dp"
+                android:layout_below="@id/basic_info"
+                android:layout_marginTop="3sp"/>
+
+            <TextView
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/profile_roll_no"
+                android:background="@color/color_grey"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"/>
+
+            <TextView
+                android:id="@+id/semester_heading_below"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Semester: "
+                android:textSize="20sp"
+                android:layout_marginStart="50dp"
+                android:layout_below="@id/line2"
+                android:layout_marginTop="3sp"/>
+
+            <TextView
+                android:id="@+id/profile_semester"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line2"
+                android:text="8th"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/semester_heading_below"
+                android:layout_marginTop="3sp"/>
+
+
+            <TextView
+                android:id="@+id/line3"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/color_grey"
+                android:layout_below="@+id/profile_semester"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"/>
+
+            <LinearLayout
+                android:id="@+id/current_user_subjects"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/line3"
+                android:layout_marginTop="3sp"
+                android:layout_marginStart="50dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Subjects"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/line5"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/color_grey"
+                android:layout_below="@+id/current_user_subjects"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"/>
+
+            <RelativeLayout
+                android:id="@+id/profile_student_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/line5"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/session_heading_below"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Session: "
+                    android:textSize="20sp"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="3sp"/>
+
+                <TextView
+                    android:id="@+id/profile_session"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2015"
+                    android:layout_toEndOf="@id/session_heading_below"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginTop="3sp"/>
+
+                <TextView
+                    android:id="@+id/line4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/color_grey"
+                    android:layout_below="@+id/profile_session"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="45dp"
+                    android:layout_marginEnd="45dp"/>
+
+                <TextView
+                    android:id="@+id/section_heading_below"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Section: "
+                    android:textSize="20sp"
+                    android:layout_below="@+id/profile_session"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="3sp"/>
+
+                <TextView
+                    android:id="@+id/profile_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="A"
+                    android:layout_below="@+id/profile_session"
+                    android:layout_toEndOf="@id/section_heading_below"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginTop="3sp"/>
+
+                <TextView
+                    android:id="@+id/line6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/profile_section"
+                    android:background="@color/color_black"
+                    android:layout_marginTop="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_teacher_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/line5"
+                android:layout_marginTop="3dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/heading_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sections "
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="50dp"/>
+
+                <LinearLayout
+                    android:id="@+id/teacher_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/heading_section"
+                    android:orientation="vertical"
+                    android:layout_marginStart="50dp">
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/line7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/teacher_section"
+                    android:background="@color/color_black"
+                    android:layout_marginTop="10dp"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

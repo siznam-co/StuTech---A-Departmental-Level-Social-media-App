@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:background="@color/color_grey"
+    android:layout_marginBottom="5dp">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/row_student_profile_img"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/my_profile_pic"/>
+    <TextView
+        android:id="@+id/row_student_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        android:textColor="@color/color_black"
+        android:textSize="25sp"/>
+
+    <RadioGroup
+        android:id="@+id/markAttendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="45dp"
+        android:layout_alignParentEnd="true">
+
+        <RadioButton
+            android:id="@+id/radioPresent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#0523C2"
+            android:text="P"
+            android:textSize="18sp"/>
+
+        <RadioButton
+            android:id="@+id/radioAbsent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FA0F00"
+            android:text="A"
+            android:textSize="18sp"/>
+
+    </RadioGroup>
+    <ImageView
+        android:id="@+id/grey_submit_single_attendance"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/row_student_title"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        android:background="@drawable/ic_send_grey" />
+    <ImageView
+        android:id="@+id/submit_single_attendance"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/row_student_title"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/ic_send_black_24dp" />
+
+
+</RelativeLayout>

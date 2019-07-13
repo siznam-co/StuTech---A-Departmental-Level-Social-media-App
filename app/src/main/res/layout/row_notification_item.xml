@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/layout_top_notify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_pic_notify"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/my_profile_pic" />
+
+        <TextView
+            android:id="@+id/text_notify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fahad posted in OOAD"
+            android:layout_toEndOf="@+id/user_pic_notify"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/notification_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_notify"
+            android:layout_toEndOf="@+id/user_pic_notify"
+            android:text="date"
+            android:textSize="10sp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="12dp"/>
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/line_between"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/layout_top_notify"
+        android:background="@color/color_grey" />
+</RelativeLayout>
