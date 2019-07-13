@@ -29,10 +29,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +58,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,7 +75,6 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
 
 
     RecyclerView postRecyclerView ;
@@ -88,30 +93,29 @@ public class HomeFragment extends Fragment {
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     static Dialog popAddPost;
+    static Dialog popPostFilter;
     SwipeRefreshLayout swipeRefreshLayout;
 
+    ImageView popupUserImage,popupPostImage,popupAddBtn, popupAddPictureBtn, popupAddFileBtn, popupCaptureCameraBtn;
+    TextView popupTitle,popupDescription, popupFileUploadName;
+    static String subjectName;
+    ProgressBar popupClickProgress;
+    //a Uri object to store file path
+    private Uri filePath = null;
+    Uri imageUri;
+    String imageDownlaodLink;
+
+    Spinner spinner;
+    String subject;
+    Button fab;
+    ImageView fabPostFilter;
+
+    RadioGroup filterRadioGroup;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment YourSubjectFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static YourSubjectFragment newInstance(String param1, String param2) {
-        YourSubjectFragment fragment = new YourSubjectFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,7 +130,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_your_subject, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_home, container, false);
         postRecyclerView  = fragmentView.findViewById(R.id.postRV);
         postRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         postRecyclerView.setHasFixedSize(true);
@@ -139,15 +143,8 @@ public class HomeFragment extends Fragment {
         myProfilePic = fragmentView.findViewById(R.id.my_profile_pic_home);
         Glide.with(HomeFragment.this).load(currentUser.getPhotoUrl()).into(myProfilePic);
 
-        Button fab = fragmentView.findViewById(R.id.fab);
-        //if(SubjectActivity.subjectName.equals("all"))
-            relativeLayout.setVisibility(View.GONE);
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popAddPost.show();
-            }
-        });*/
+        fab = fragmentView.findViewById(R.id.fab);
+        fabPostFilter = fragmentView.findViewById(R.id.fab_filter);
 
         swipeRefreshLayout = fragmentView.findViewById(R.id.post_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -192,6 +189,7 @@ public class HomeFragment extends Fragment {
                             subjectList.add(subject);
                         }
 
+                        setSubjectList(subjectList);
                         // Get List Posts from the database
 
                         query1 = FirebaseDatabase.getInstance().getReference("Posts");
@@ -242,43 +240,493 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void setSubjectList(List<String> subjectList) {
+        this.subjectList = subjectList;
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iniPopup();
+                popAddPost.show();
+            }
+        });
+        fabPostFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterPopUp();
+                popPostFilter.show();
+            }
+        });
     }
+
+    private void filterPopUp() {
+        popPostFilter = new Dialog(getActivity());
+        popPostFilter.setContentView(R.layout.pop_post_filter);
+        popPostFilter.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popPostFilter.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
+        popPostFilter.getWindow().getAttributes().gravity = Gravity.CENTER_VERTICAL;
+
+        filterRadioGroup = popPostFilter.findViewById(R.id.radio_post_filter);
+        RadioButton radioButton1  = new RadioButton(getActivity());
+        radioButton1.setText("All");
+        filterRadioGroup.addView(radioButton1);
+        radioButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStart();
+                swipeRefreshLayout.setRefreshing(true);
+                popPostFilter.hide();
+            }
+        });
+
+        for(final String subject: subjectList){
+            RadioButton radioButton  = new RadioButton(getActivity());
+            radioButton.setText(subject);
+            filterRadioGroup.addView(radioButton);
+            radioButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    swipeRefreshLayout.setRefreshing(true);
+                    popPostFilter.hide();
+                    query1 = FirebaseDatabase.getInstance().getReference("Posts")
+                                .orderByChild("subjectName").equalTo(subject);
+                    query1.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            postList.clear();
+                            for (DataSnapshot postsnap: dataSnapshot.getChildren()) {
+                                Post post = postsnap.getValue(Post.class);
+                                postList.add(post);
+                            }
+
+                            Collections.reverse(postList);
+                            swipeRefreshLayout.setRefreshing(false);
+                            postAdapter = new PostAdapter(getActivity(),postList);
+                            postRecyclerView.setAdapter(postAdapter);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            });
+        }
+
+    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public String getSubject() {
+        return subject;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void iniPopup() {
+        popAddPost = new Dialog(getActivity());
+        popAddPost.setContentView(R.layout.popup_add_post);
+        popAddPost.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
+        popAddPost.getWindow().getAttributes().gravity = Gravity.TOP;
+
+        final Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
+
+        // ini popup widgets
+        popupUserImage = popAddPost.findViewById(R.id.popup_user_image);
+        popupPostImage = popAddPost.findViewById(R.id.popup_img);
+        popupTitle = popAddPost.findViewById(R.id.popup_title);
+        popupAddPictureBtn = popAddPost.findViewById(R.id.upload_picture_btn);
+        popupAddFileBtn = popAddPost.findViewById(R.id.upload_file_btn);
+        popupCaptureCameraBtn = popAddPost.findViewById(R.id.capture_camera_btn);
+        spinner = popAddPost.findViewById(R.id.subject_spinner);
+
+        popupDescription = popAddPost.findViewById(R.id.popup_description);
+        popupFileUploadName = popAddPost.findViewById(R.id.file_upload_name);
+
+        popupAddBtn = popAddPost.findViewById(R.id.popup_add);
+        popupClickProgress = popAddPost.findViewById(R.id.popup_progressBar);
+
+        // load Current user profile photo
+
+        Glide.with(getActivity()).load(currentUser.getPhotoUrl()).into(popupUserImage);
+
+
+        //TODO: Handle pop up camera button clicked
+        popupCaptureCameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupCaptureCameraBtn.startAnimation(anim);
+                fileType = "camera" ;
+                checkAndRequestForPermission(fileType);
+            }
+        });
+        // Add post click Listener
+        //TODO: Handle pop up image clicked
+        popupAddPictureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // here when image clicked we need to open the gallery
+                // before we open the gallery we need to check if our app have the access to user files
+                // we did this before in register activity I'm just going to copy the code to save time ...
+                popupAddPictureBtn.startAnimation(anim);
+                fileType = "image";
+                checkAndRequestForPermission(fileType);
+                //showFileChooser
+
+            }
+        });
+        //TODO: Handle popUp file upload button clicked
+        popupAddFileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupAddFileBtn.startAnimation(anim);
+                fileType = "file";
+                checkAndRequestForPermission(fileType);
+
+            }
+        });
+
+        popupAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                popupAddBtn.setVisibility(View.INVISIBLE);
+                popupClickProgress.setVisibility(View.VISIBLE);
+
+                // we need to test all input fields (Title and description ) and post image
+
+                if (!popupTitle.getText().toString().isEmpty()
+                        && !popupDescription.getText().toString().isEmpty() && !getSubject().isEmpty()) {
+                    uploadFile();
+                }
+                else {
+                    showMessage("Please verify all input fields") ;
+                    popupAddBtn.setVisibility(View.VISIBLE);
+                    popupClickProgress.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        //TODO: to select subject
+        //Create a ArrayAdapter using arraylist and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,subjectList);
+        //specify the layout to appear list items
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //data bind adapter with both spinners
+        spinner.setAdapter(adapter);
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String text = parent.getItemAtPosition(position).toString();
+                setSubject(text);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void checkAndRequestForPermission(String type) {
+
+        //TODO: External Storage
+        if(type.equals("file") || type.equals("image")) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // everything goes well : we have permission to access user gallery
+                //openGallery();
+                this.fileType = type;
+                showFileChooser(fileType);
+
+            } else
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PReqCode);
+        }else{
+            //TODO Camera
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    // everything goes well : we have permission to access user gallery
+                    //openGallery();
+                    this.fileType = type;
+                    showFileChooser(fileType);
+
+                } else{
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PReqCode);
+                }
+            }else
+                showFileChooser(fileType);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode==PReqCode && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            showMessage("Permission granted");
+            //showFileChooser(fileType);
+        }
+        else{
+            showMessage("Please accept Required permission");
+        }
+    }
+
+
+
+    //TODO: method to show file chooser
+    private void showFileChooser(String type) {
+        if(type.equals("image")) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        }
+        else if(type.equals("camera")){
+
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+            this.imageUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values  );
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(Intent.createChooser(intent, "captured Picture"), PICK_IMAGE_REQUEST);
+
+            //showFileChooser("image");
+        }
+        else{
+            String[] mimeTypes =
+                    {"application/pdf", "application/msword", "application/vnd.ms-powerpoint", "application/vnd.ms-excel", "text/plain"};
+
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+                if (mimeTypes.length > 0) {
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                }
+            } else {
+                String mimeTypesStr = "";
+                for (String mimeType : mimeTypes) {
+                    mimeTypesStr += mimeType + "|";
+                }
+                intent.setType(mimeTypesStr.substring(0, mimeTypesStr.length() - 1));
+            }
+            startActivityForResult(Intent.createChooser(intent, "ChooseFile"), PICK_IMAGE_REQUEST);
+        }
+    }
+
+    //handling the image chooser activity result
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if (fileType.equals("camera")) {
+                //Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                popupPostImage.setVisibility(View.VISIBLE);
+                this.filePath = imageUri;
+                popupPostImage.setImageURI(imageUri);
+
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+                this.filePath = data.getData();
+
+                if (requestCode == PICK_IMAGE_REQUEST && data.getData() != null) {
+
+                    if (fileType.equals("image")) {
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
+                            popupPostImage.setVisibility(View.VISIBLE);
+                            popupPostImage.setImageBitmap(bitmap);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }/*else if(fileType.equals("camera")){
+                Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+                popupPostImage.setVisibility(View.VISIBLE);
+                popupPostImage.setImageBitmap(bitmap);
+            }*/ else {
+                        String temp = filePath.toString();
+                        String[] bits = temp.split("/");
+                        String lastOne = bits[bits.length - 1];
+                        popupFileUploadName.setText(getCompleteFileName(filePath));
+                        popupFileUploadName.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
+    }
+
+    //this method will upload the file
+    private void uploadFile() {
+        //if there is a file to upload
+        if (filePath != null || fileType.equals("camera") ) {
+            //displaying a progress dialog while upload is going on
+            /*final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading");
+            progressDialog.show();*/
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Post_Files");
+            final StorageReference imageFilePath = storageReference.child(filePath.getLastPathSegment());
+            imageFilePath.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //if the upload is successfull
+                            //hiding the progress dialog
+                            imageFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    imageDownlaodLink = uri.toString();
+
+                                    // Add post to firebase database using uploaded image
+                                    addPost(imageDownlaodLink,fileType,getCompleteFileName(filePath));
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // something goes wrong uploading picture
+
+                                    showMessage(e.getMessage());
+                                    popupClickProgress.setVisibility(View.INVISIBLE);
+                                    popupAddBtn.setVisibility(View.VISIBLE);
+
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //if the upload is not successfull
+                            //hiding the progress dialog
+                            /*progressDialog.dismiss();*/
+
+                            //and displaying error message
+                            Toast.makeText(getActivity().getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+        //if there is not any file
+        else {
+            //you can display an error toast
+            addPost("No","no", "no");
+            //popupPostImage.setVisibility(View.INVISIBLE);
+        }
+        //----------------------------
+    }
+
+    private String getCompleteFileName(Uri uri)
+    {
+        String fileName=uri.toString(), path;
+        /*ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();*/
+        if(fileType.equals("image")){
+            String[] bits = fileName.split("/");
+            fileName = bits[bits.length - 1];
+
+        }else{
+            path = getRealPathFromURI(uri);
+            fileName = path.substring(path.lastIndexOf("/")+1);
+        }
+        /*String file;
+        if (filename.indexOf(".") > 0) {
+            file = filename.substring(0, filename.lastIndexOf("."));
+        } else {
+            file =  filename;
+        }y
+
+        fileName= file + mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));*/
+        return fileName;
+    }
+
+    private String getRealPathFromURI(Uri uri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = getActivity().getApplicationContext().getContentResolver().query(uri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+    }
+
+    private void addPost(String imageDownlaodLink, String ft, String completeFileName) {
+
+        // create post Object
+        Post post = new Post(popupTitle.getText().toString(),
+                popupDescription.getText().toString(),
+                imageDownlaodLink,
+                currentUser.getUid(),
+                currentUser.getPhotoUrl().toString(), getSubject(), currentUser.getDisplayName(), ft, completeFileName);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Posts").push();
+
+        // get post unique ID and upadte post key
+        final String key = myRef.getKey();
+        post.setPostKey(key);
+
+
+        // add post data to firebase database
+
+        myRef.setValue(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                showMessage("Post Added successfully");
+
+                /*DatabaseReference notifyRef = FirebaseDatabase.getInstance().getReference("Notifications").push();
+                Notifications notification = new Notifications(AttendanceActivity.subjectName, key, currentUser.getDisplayName(), currentUser.getPhotoUrl().toString(), notifyRef.getKey());
+                notifyRef.setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });*/
+
+                popupClickProgress.setVisibility(View.INVISIBLE);
+                popupAddBtn.setVisibility(View.VISIBLE);
+
+                popupDescription.setText("");
+                popupTitle.setText("");
+                popupPostImage.setVisibility(View.GONE);
+                popupFileUploadName.setVisibility(View.GONE);
+                popAddPost.dismiss();
+
+                /*DatabaseReference notificationReference = FirebaseDatabase.getInstance()
+                        .getReference("Notifications").child(key);
+                notificationReference.setValue(key);*/
+            }
+        });
     }
 
     private void showMessage(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
     }
+
+
 }

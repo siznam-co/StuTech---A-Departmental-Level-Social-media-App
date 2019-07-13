@@ -42,7 +42,7 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
-        <activity android:name=".SubjectActivity" />
+        <activity android:name=".AttendanceActivity" />
         <activity
             android:name=".UploadActivity"
             android:label="@string/title_activity_upload"

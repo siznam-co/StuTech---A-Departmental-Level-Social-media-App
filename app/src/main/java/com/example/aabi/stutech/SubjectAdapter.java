@@ -50,7 +50,7 @@ class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.MyViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent subjectToHomeActivity = new Intent(sContext, SubjectActivity.class);
+                    Intent subjectToHomeActivity = new Intent(sContext, AttendanceActivity.class);
                     int position = getAdapterPosition();
 
                     subjectToHomeActivity.putExtra("subjectName",sData.get(position));

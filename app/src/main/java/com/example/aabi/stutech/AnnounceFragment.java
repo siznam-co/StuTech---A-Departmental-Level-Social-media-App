@@ -151,7 +151,7 @@ public class AnnounceFragment extends Fragment {
         iniPopup();
 
         ImageView fab = fragmentView.findViewById(R.id.fab_announce);
-        //if(SubjectActivity.subjectName.equals("all"))
+        //if(AttendanceActivity.subjectName.equals("all"))
             //relativeLayout.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,16 +179,16 @@ public class AnnounceFragment extends Fragment {
         super.onStart();
 
         // Get List Posts from the database
-        /*if(SubjectActivity.subjectName.equals("all")){
+        /*if(AttendanceActivity.subjectName.equals("all")){
             query1 = FirebaseDatabase.getInstance().getReference("Posts");
-        }else if(SubjectActivity.subjectName.equals("announce")){*/
+        }else if(AttendanceActivity.subjectName.equals("announce")){*/
             query1 = FirebaseDatabase.getInstance().getReference("Posts")
                     .orderByChild("subjectName")
                     .equalTo("announce");
         /*}else {
             query1 = FirebaseDatabase.getInstance().getReference("Posts")
                     .orderByChild("subjectName")
-                    .equalTo(SubjectActivity.subjectName);
+                    .equalTo(AttendanceActivity.subjectName);
         }*/
         query1.addValueEventListener(new ValueEventListener() {
             @Override

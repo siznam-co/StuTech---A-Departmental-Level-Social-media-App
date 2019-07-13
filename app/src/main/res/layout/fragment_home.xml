@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".YourSubjectFragment"
+    tools:context=".HomeActivity"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -30,10 +30,25 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_marginEnd="5dp"
-            android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/my_profile_pic_home"
+            android:layout_toStartOf="@+id/fab_filter"
             android:text="Add Post"
             android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/fab_filter"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/filter_icon"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/rounded_background"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"/>
+
     </RelativeLayout>
 
 
@@ -50,6 +65,7 @@
             android:background="@color/color_grey"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
 
 
 

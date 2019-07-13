@@ -55,10 +55,10 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
                 final String marked =  holder.radioButton.getText().toString().trim();
 
 
-                //aAttendance = new Attendance(SubjectActivity.subjectName, marked);
+                //aAttendance = new Attendance(AttendanceActivity.subjectName, marked);
 
                 final DatabaseReference aReference = FirebaseDatabase.getInstance().getReference("Attendance")
-                        .child(aData.get(position).getUserId()).child(SubjectActivity.subjectName);
+                        .child(aData.get(position).getUserId()).child(AttendanceActivity.subjectName);
 
                 aReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -87,7 +87,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
 
     private void addAttendance(Integer mark, final String marked, final String userId, final MyViewHolder holder, final int position) {
         final DatabaseReference attendanceReference = FirebaseDatabase.getInstance().getReference("Attendance")
-                .child(userId).child(SubjectActivity.subjectName);
+                .child(userId).child(AttendanceActivity.subjectName);
 
 
         if(marked.equals("P")){
