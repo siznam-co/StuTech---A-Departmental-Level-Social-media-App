@@ -60,15 +60,19 @@ public class MyService extends FirebaseMessagingService {
                 String senderName = remoteMessage.getData().get("senderName");
                 String subjectName = remoteMessage.getData().get("subjectName");
                 String userPhoto = remoteMessage.getData().get("userPhoto");
-                String Desc = subjectName+" has new post from "+senderName;
-                sendMessageNotification(postKey, Desc, userPhoto);
+                String Desc = "";
+                if(subjectName.equals("announce"))
+                    Desc = senderName + " made an Announcement";
+                else
+                    Desc = subjectName+" has new post from "+senderName;
+                sendMessageNotification(postKey, Desc, senderName);
             }else if(dataType.equals("like")){
                 String postKey = remoteMessage.getData().get("postKey");
                 String senderName = remoteMessage.getData().get("senderName");
                 String subjectName = remoteMessage.getData().get("subjectName");
                 String userPhoto = remoteMessage.getData().get("userPhoto");
                 String Desc = senderName+" liked your post.";
-                sendMessageNotification(postKey, Desc, userPhoto);
+                sendMessageNotification(postKey, Desc, senderName);
             }else{
                 String postKey = remoteMessage.getData().get("postKey");
                 String senderName = remoteMessage.getData().get("senderName");

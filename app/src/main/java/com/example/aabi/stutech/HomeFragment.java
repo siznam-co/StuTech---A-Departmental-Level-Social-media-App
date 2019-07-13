@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference ;
     List<Post> postList = new ArrayList<>();
+    List<String> subjectList = new ArrayList<>();
     Query query1;
     RelativeLayout relativeLayout;
     ImageView myProfilePic;
@@ -165,23 +166,74 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // Get List Posts from the database
 
-        query1 = FirebaseDatabase.getInstance().getReference("Posts");
+        DatabaseReference UserIdReference = FirebaseDatabase.getInstance().getReference("UserIDs").child(currentUser.getUid());
 
-        query1.addValueEventListener(new ValueEventListener() {
+        UserIdReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                //editRollNo.setText(tempKey);
+                DatabaseReference userReference;
+                if(user.getDesignation().equals("Teacher")){
+                    userReference = FirebaseDatabase.getInstance()
+                            .getReference("Teacher").child(user.getUserKey()).child("subjectList");
 
-                postList.clear();
-                for (DataSnapshot postsnap: dataSnapshot.getChildren()) {
-                    Post post = postsnap.getValue(Post.class);
-                    postList.add(post) ;
+                }else{
+                    userReference = FirebaseDatabase.getInstance()
+                            .getReference("Student").child(user.getUserKey()).child("subjectList");
                 }
-                Collections.reverse(postList);
-                swipeRefreshLayout.setRefreshing(false);
-                postAdapter = new PostAdapter(getActivity(),postList);
-                postRecyclerView.setAdapter(postAdapter);
+                userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        subjectList.clear();
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            String subject = snapshot.getValue(String.class);
+                            subjectList.add(subject);
+                        }
+
+                        // Get List Posts from the database
+
+                        query1 = FirebaseDatabase.getInstance().getReference("Posts");
+
+                        query1.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                postList.clear();
+                                for (DataSnapshot postsnap: dataSnapshot.getChildren()) {
+                                    Post post = postsnap.getValue(Post.class);
+                                    for(String subject: subjectList){
+                                        if(subject.equals(post.getSubjectName())) {
+                                            postList.add(post);
+                                        }
+                                    }
+                                }
+
+                                Collections.reverse(postList);
+                                swipeRefreshLayout.setRefreshing(false);
+                                postAdapter = new PostAdapter(getActivity(),postList);
+                                postRecyclerView.setAdapter(postAdapter);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                /*notiAdapter = new NotiAdapter(getActivity(),NList);
+                notiRecyclerView.setAdapter(notiAdapter);
+                Toast.makeText(getActivity(), ""+NList.size(),Toast.LENGTH_SHORT).show();*/
+
+
             }
 
             @Override
@@ -189,8 +241,6 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
-
 
     }
 
