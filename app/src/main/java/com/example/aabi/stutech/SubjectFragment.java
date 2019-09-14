@@ -47,20 +47,8 @@ public class SubjectFragment extends Fragment {
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
 
-    Button btnSelectSubject, btnAnnounce;
-    static Dialog popSubjectFilter;
-    LinearLayout SubjectsListView;
-    Button btnFilterIt;
-    ImageView fabFilterBtn;
-    TextView textViewPanel;
-    String tempSubjectName = "";
-    private SharedPreferences preferences;
-    private static final String PREFS_NAME = "PrefsFile2";
-
-    private String semester;
     RecyclerView subjectRecyclerView;
     List<String> subjectList = new ArrayList<>();
-    List<String> tempSubjectList = new ArrayList<>();
 
     SubjectAdapter subjectAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -80,22 +68,11 @@ public class SubjectFragment extends Fragment {
         subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         subjectRecyclerView.setHasFixedSize(true);
 
-        fabFilterBtn = fragmentView.findViewById(R.id.fab_filter_it);
-
-        fabFilterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popSubjectFilter.show();
-            }
-        });
-
-        filterPopup();
-
         swipeRefreshLayout = fragmentView.findViewById(R.id.subject_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
+
                 onStart();
             }
         });
@@ -108,6 +85,7 @@ public class SubjectFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        swipeRefreshLayout.setRefreshing(true);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         DatabaseReference newRef = databaseReference.child("UserIDs").child(currentUser.getUid());
 
@@ -137,11 +115,7 @@ public class SubjectFragment extends Fragment {
                     String data = snapshot.getValue(String.class);
                     subjectList.add(data);
                 }
-                textViewPanel.setText(Arrays.toString(new List[]{subjectList}));
                 Collections.reverse(subjectList);
-
-
-                tempSubjectList.addAll(subjectList);
                 MakeRecyclerView(subjectList);
             }
 
@@ -150,150 +124,8 @@ public class SubjectFragment extends Fragment {
 
             }
         });
-
     }
 
-    public void filterPopup() {
-        popSubjectFilter = new Dialog(getActivity());
-        popSubjectFilter.setContentView(R.layout.popup_filter_subject);
-        popSubjectFilter.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
-        popSubjectFilter.getWindow().getAttributes().gravity = Gravity.CENTER;
-
-        SubjectsListView = popSubjectFilter.findViewById(R.id.subjects_checklist);
-        Spinner spinner = popSubjectFilter.findViewById(R.id.subject_semester_spinner);
-        btnFilterIt = popSubjectFilter.findViewById(R.id.filter_it);
-        textViewPanel = popSubjectFilter.findViewById(R.id.pop_subject_panel);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.all_semester, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String text = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
-                ArrayList<String> mTestArray;
-
-                switch (text) {
-                    case "1st":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.First)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "2nd":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Second)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "3rd":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Third)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "4th":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Fourth)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "5th":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Fifth)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "6th":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Sixth)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "7th":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Seventh)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    case "8th":
-                        SubjectsListView.removeAllViews();
-                        mTestArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Eighth)));
-                        setSubjectCheckBoxText(mTestArray);
-                        break;
-                    default:
-                        SubjectsListView.removeAllViews();
-                        break;
-                }
-                setSemester(text);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        //TODO: Hit the filter button
-        btnFilterIt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                MakeRecyclerView(subjectList);
-
-                //Saving subjects list preferences
-                /*Set<String> set = new HashSet<String>();
-                set.addAll(subjectList);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putStringSet("AllSubjects", set);
-                editor.putString("oldUserId",currentUser.getUid());
-                editor.apply();*/
-
-                popSubjectFilter.hide();
-            }
-        });
-    }
-
-    private void setSemester(String text) {
-        this.semester = text;
-    }
-    private String getSemester(){
-        return semester;
-    }
-
-    private void setSubjectCheckBoxText(ArrayList<String> mTestArray) {
-        for(int i=0; i<mTestArray.size(); i++){
-            CheckBox checkBox = new CheckBox(getActivity());
-            checkBox.setId(i);
-            checkBox.setText(mTestArray.get(i));
-            checkBox.setTextColor(getResources().getColor(R.color.color_black));
-            if(subjectList.contains(checkBox.getText().toString()))
-                checkBox.setChecked(true);
-            checkBox.setOnClickListener(getOnClickDoSomething(checkBox));
-            SubjectsListView.addView(checkBox);
-        }
-    }
-
-    private View.OnClickListener getOnClickDoSomething(final CheckBox checkBox) {
-        return new View.OnClickListener() {
-            String subjectName = checkBox.getText().toString();
-            @Override
-            public void onClick(View v) {
-                if(checkBox.isChecked()) {
-                    if(subjectList.contains(subjectName)) {
-                        Toast.makeText(getActivity(), "Already Added! "+subjectName, Toast.LENGTH_SHORT).show();
-                    } else{
-                        subjectList.add(subjectName);
-                        textViewPanel.setText(Arrays.toString(new List[]{subjectList}));
-                    }
-
-                } else{
-                    if(tempSubjectList.contains(subjectName)){
-                        checkBox.setChecked(true);
-                    }else {
-                        subjectList.remove(subjectName);
-                    }
-                    textViewPanel.setText(Arrays.toString(new List[]{subjectList}));
-                }
-            }
-        };
-    }
 
     private void MakeRecyclerView(List<String> em) {
 

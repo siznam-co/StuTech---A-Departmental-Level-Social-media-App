@@ -122,7 +122,56 @@ public class NotiAdapter extends RecyclerView.Adapter<NotiAdapter.MyViewHolder> 
 
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(time);
-        String date = DateFormat.format("dd-MM-yyyy @ HH:mm",calendar).toString();
+        String tempMonth = DateFormat.format("MM",calendar).toString();
+        switch (tempMonth){
+            case "01":
+                tempMonth = "January";
+                break;
+            case "02":
+                tempMonth = "February";
+                break;
+            case "03":
+                tempMonth = "March";
+                break;
+            case "04":
+                tempMonth = "April";
+                break;
+            case "05":
+                tempMonth = "May";
+                break;
+            case "06":
+                tempMonth = "June";
+                break;
+            case "07":
+                tempMonth = "July";
+                break;
+            case "08":
+                tempMonth = "August";
+                break;
+            case "09":
+                tempMonth = "September";
+                break;
+            case "10":
+                tempMonth = "October";
+                break;
+            case "11":
+                tempMonth = "November";
+                break;
+            case "12":
+                tempMonth = "December";
+                break;
+
+        }
+        String timing = " AM";
+
+        int hour = Integer.parseInt(DateFormat.format("HH",calendar).toString());
+        if(hour>12){
+            hour = hour - 12;
+            timing = " PM";
+        }
+
+        String date = DateFormat.format("dd",calendar).toString() + " " +
+                tempMonth+ " at "+ hour + DateFormat.format(":mm",calendar).toString() + timing;
         return date;
 
 

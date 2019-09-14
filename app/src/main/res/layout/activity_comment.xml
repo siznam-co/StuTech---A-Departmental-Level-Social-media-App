@@ -27,12 +27,21 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/commentRV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_grey"
+        android:layout_below="@+id/action_bar_comment"
+        android:layout_marginTop="7dp"/>
+
     <RelativeLayout
         android:id="@+id/add_comment_layout"
         android:layout_width="match_parent"
-        android:layout_height="37dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/action_bar_comment">
+        android:layout_alignParentBottom="true"
+        android:padding="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/post_detail_currentuser_img"
@@ -63,12 +72,5 @@
             android:background="@drawable/ic_send_black_24dp" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/commentRV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_grey"
-        android:layout_below="@+id/add_comment_layout"
-        android:layout_marginTop="7dp"/>
 
 </RelativeLayout>

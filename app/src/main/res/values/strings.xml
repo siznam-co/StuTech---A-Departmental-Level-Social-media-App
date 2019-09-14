@@ -148,8 +148,5 @@
         <item>Project</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    >
-
+    <string name="attendance_alert_message">"You have not completed the attendance for today. Press Cancel! and complete your attendance. Press Sure! to discard this attendance"</string>
 </resources>

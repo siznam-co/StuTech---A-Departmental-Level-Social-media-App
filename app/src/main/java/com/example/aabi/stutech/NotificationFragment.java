@@ -113,7 +113,7 @@ public class NotificationFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.setRefreshing(true);
+
                 onStart();
             }
         });
@@ -125,6 +125,7 @@ public class NotificationFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        refreshLayout.setRefreshing(true);
         //TODO: We want notifications of:
         // * posts(subjects from current user subjectList),
         // * comments (on current user post),
@@ -255,6 +256,10 @@ public class NotificationFragment extends Fragment {
                                 if(sub.equals(post.getSubjectName())){
                                     Notifications no = new Notifications(sub, post.getPostKey(), post.getUserName(), post.getUserPhoto(), post.getTimeStamp());
                                     NList.add(no);
+                                    Collections.sort(NList, dateSort);
+                                    notiAdapter = new NotiAdapter(getActivity(),NList);
+                                    notiRecyclerView.setAdapter(notiAdapter);
+                                    refreshLayout.setRefreshing(false);
                                     /*Collections.sort(NList, dateSort);*/
 
                                 }
@@ -292,6 +297,10 @@ public class NotificationFragment extends Fragment {
                                         Notifications no = new Notifications("like", snapshot.getKey(), likes.getUserName(), likes.getUserPhoto(), likes.getTimeStamp());
                                         NList.add(no);
                                         //Toast.makeText(getActivity(), ""+NList.size(),Toast.LENGTH_SHORT).show();
+                                        Collections.sort(NList, dateSort);
+                                        notiAdapter = new NotiAdapter(getActivity(),NList);
+                                        notiRecyclerView.setAdapter(notiAdapter);
+                                        refreshLayout.setRefreshing(false);
                                     }
 
                                 }

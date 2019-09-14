@@ -17,7 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProfileEditActivity"></activity>
+        <activity android:name=".FriendsActivity"></activity>
+        <activity android:name=".MessageActivity" />
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".ProfileEditActivity" />
 
         <service
             android:name=".MyService"

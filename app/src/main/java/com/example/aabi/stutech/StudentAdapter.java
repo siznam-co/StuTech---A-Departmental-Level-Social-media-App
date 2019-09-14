@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -27,7 +29,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
         private Context aContext;
         private List<Student> aData ;
         private Attendance aAttendance;
-        private Integer mark = 0;
 
 
     public StudentAdapter(Context aContext, List<Student> aData) {
@@ -39,78 +40,87 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View row = LayoutInflater.from(aContext).inflate(R.layout.row_student_item,parent,false);
-        return new MyViewHolder(row);
+        if(AttendanceActivity.type.equals("marks")){
+            View row = LayoutInflater.from(aContext).inflate(R.layout.row_marks_item,parent,false);
+            return new MyViewHolder(row);
+        }else{
+            View row = LayoutInflater.from(aContext).inflate(R.layout.row_student_item,parent,false);
+            return new MyViewHolder(row);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final String title = aData.get(position).getName() + " (" + aData.get(position).getRoll() + ")";
-        holder.tvTitle.setText(title);
+
+        final String roll = aData.get(position).getRoll() + "-BSCS-"+ aData.get(position).getBatch()+"-" + aData.get(position).getSection();
+
+        holder.tvTitle.setText(aData.get(position).getName());
+        holder.rollNo.setText(roll);
+
         Glide.with(aContext).load(aData.get(position).getUserPhoto()).into(holder.imgStudentProfile);
-        holder.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                holder.radioButton = group.findViewById(checkedId);
-                final String marked =  holder.radioButton.getText().toString().trim();
+
+        if(AttendanceActivity.type.equals("marks")){
+            holder.numberPicker.setMinValue(0);
+            holder.numberPicker.setMaxValue(100);
+            /*holder.numberPicker.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int value) {
+                    return String.format("%02d",value);
+                }
+            });*/
+            holder.numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                    aAttendance = new Attendance(aData.get(position).getUserId(), newVal+"");
+                    setaAttendanceForThis(aAttendance);
+                }
+            });
+            /*if(!holder.editTextMarks.getText().toString().isEmpty()){
+                aAttendance = new Attendance(aData.get(position).getUserId(), holder.editTextMarks.getText().toString());
+                setaAttendanceForThis(aAttendance);
+            }*/
+        }else{
+            holder.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    holder.radioButton = group.findViewById(checkedId);
+                    final String marked =  holder.radioButton.getText().toString().trim();
 
 
-                //aAttendance = new Attendance(AttendanceActivity.subjectName, marked);
-
-                final DatabaseReference aReference = FirebaseDatabase.getInstance().getReference("Attendance")
-                        .child(aData.get(position).getUserId()).child(AttendanceActivity.subjectName);
-
-                aReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
-                            mark = dataSnapshot.getValue(Integer.class);
-                            addAttendance(mark, marked, aData.get(position).getUserId(), holder, position);
-                        }else{
-                            addAttendance(0, marked, aData.get(position).getUserId(), holder, position);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-
-
-            }
-        });
-
-    }
-
-    private void addAttendance(Integer mark, final String marked, final String userId, final MyViewHolder holder, final int position) {
-        final DatabaseReference attendanceReference = FirebaseDatabase.getInstance().getReference("Attendance")
-                .child(userId).child(AttendanceActivity.subjectName);
-
-
-        if(marked.equals("P")){
-            if(mark>=0)
-                ++mark;
+                    aAttendance = new Attendance(aData.get(position).getUserId(), marked);
+                    setaAttendanceForThis(aAttendance);
+                }
+            });
         }
 
-        final int finalMark = mark;
-
-        holder.btnSingleStundentAttendance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attendanceReference.setValue(finalMark).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(aContext, aData.get(position).getName() + " = " + marked, Toast.LENGTH_SHORT).show();
-                        holder.btnSingleStundentAttendanceSubmitted.setVisibility(View.VISIBLE);
-                        holder.btnSingleStundentAttendance.setVisibility(View.GONE);
-                    }
-                });
-            }
-        });
     }
+
+    private void setaAttendanceForThis(Attendance AttendanceItem) {
+        if(AttendanceActivity.attendancesList.isEmpty()){
+            AttendanceActivity.attendancesList.add(AttendanceItem);
+            //Toast.makeText(aContext, AttendanceActivity.attendancesList.size()+"", Toast.LENGTH_SHORT).show();
+        }else{
+            if(!isAlreadyThere(AttendanceItem)){
+                AttendanceActivity.attendancesList.add(AttendanceItem);
+                //Toast.makeText(aContext, AttendanceActivity.attendancesList.size()+"", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+    }
+
+    private boolean isAlreadyThere(Attendance attendanceItem) {
+        boolean isThere = false;
+        for(Attendance attendance: AttendanceActivity.attendancesList){
+            if(attendance.getUserId().equals(attendanceItem.getUserId())){
+                attendance.setMarked(attendanceItem.getMarked());
+                //Toast.makeText(aContext, AttendanceActivity.attendancesList.size()+"", Toast.LENGTH_SHORT).show();
+                isThere = true;
+            }
+        }
+        return isThere;
+    }
+
 
 
     @Override
@@ -122,10 +132,12 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle;
-        ImageView imgStudentProfile, btnSingleStundentAttendance, btnSingleStundentAttendanceSubmitted;
+        ImageView imgStudentProfile;
         RadioGroup radioGroup;
         RadioButton radioButton;
-
+        TextView rollNo;
+        NumberPicker numberPicker;
+        //EditText editTextMarks;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -133,29 +145,9 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
             tvTitle = itemView.findViewById(R.id.row_student_title);
             imgStudentProfile = itemView.findViewById(R.id.row_student_profile_img);
             radioGroup = itemView.findViewById(R.id.markAttendance);
-            btnSingleStundentAttendance = itemView.findViewById(R.id.submit_single_attendance);
-            btnSingleStundentAttendanceSubmitted = itemView.findViewById(R.id.grey_submit_single_attendance);
-
-            /*itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    *//*Intent studentDetailActivity = new Intent(aContext,studentDetailActivity.class);
-                    int position = getAdapterPosition();
-
-                    postDetailActivity.putExtra("title",aData.get(position).getTitle());
-                    postDetailActivity.putExtra("postImage",aData.get(position).getPicture());
-                    postDetailActivity.putExtra("description",aData.get(position).getDescription());
-                    postDetailActivity.putExtra("postKey",aData.get(position).getPostKey());
-                    postDetailActivity.putExtra("userPhoto",aData.get(position).getUserPhoto());
-                    // will fix this later i forgot to add user name to post object
-                    //postDetailActivity.putExtra("userName",aData.get(position).getUsername);
-                    long timestamp  = (long) aData.get(position).getTimeStamp();
-                    postDetailActivity.putExtra("postDate",timestamp) ;
-                    aContext.startActivity(postDetailActivity);*//*
-                    Toast.makeText(aContext,"Get lost",Toast.LENGTH_SHORT).show();
-                }
-            });*/
+            rollNo = itemView.findViewById(R.id.attendance_roll_no);
+            numberPicker = itemView.findViewById(R.id.marks);
+            //editTextMarks = itemView.findViewById(R.id.student_marks);
         }
     }
 }

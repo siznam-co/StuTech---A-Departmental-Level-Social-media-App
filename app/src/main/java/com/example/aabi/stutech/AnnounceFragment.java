@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -32,9 +33,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +62,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
 
 public class AnnounceFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -87,8 +91,9 @@ public class AnnounceFragment extends Fragment {
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     static Dialog popAddPost;
-    ImageView popupUserImage,popupPostImage,popupAddBtn, popupAddPictureBtn, popupAddFileBtn, popupCaptureCameraBtn;
+    ImageView popupUserImage,popupPostImage, popupAddPictureBtn, popupAddFileBtn, popupCaptureCameraBtn;
     TextView popupTitle,popupDescription, popupFileUploadName;
+    Button popupAddBtn;
     static String subjectName;
     ProgressBar popupClickProgress;
     //a Uri object to store file path
@@ -164,7 +169,7 @@ public class AnnounceFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
+
                 onStart();
             }
         });
@@ -178,6 +183,7 @@ public class AnnounceFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        swipeRefreshLayout.setRefreshing(true);
         // Get List Posts from the database
         /*if(AttendanceActivity.subjectName.equals("all")){
             query1 = FirebaseDatabase.getInstance().getReference("Posts");
@@ -253,11 +259,14 @@ public class AnnounceFragment extends Fragment {
         popAddPost = new Dialog(getActivity());
         popAddPost.setContentView(R.layout.popup_add_post);
         popAddPost.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
+        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.MATCH_PARENT);
         popAddPost.getWindow().getAttributes().gravity = Gravity.TOP;
+        popAddPost.getWindow().addFlags(FLAG_BLUR_BEHIND);
         final Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 
         // ini popup widgets
+        Spinner spinner = popAddPost.findViewById(R.id.subject_spinner);
+        spinner.setVisibility(View.GONE);
         popupUserImage = popAddPost.findViewById(R.id.popup_user_image);
         popupPostImage = popAddPost.findViewById(R.id.popup_img);
         popupTitle = popAddPost.findViewById(R.id.popup_title);
@@ -269,6 +278,8 @@ public class AnnounceFragment extends Fragment {
         popupFileUploadName = popAddPost.findViewById(R.id.file_upload_name);
 
         popupAddBtn = popAddPost.findViewById(R.id.popup_add);
+        popupAddBtn.setText("Announce");
+        popupAddBtn.setPadding(50,0,50,0);
         popupClickProgress = popAddPost.findViewById(R.id.popup_progressBar);
 
         // load Current user profile photo
@@ -590,13 +601,6 @@ public class AnnounceFragment extends Fragment {
         myRef.setValue(post).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                /*DatabaseReference notifyRef = FirebaseDatabase.getInstance().getReference("Notifications").push();
-                Notifications notification = new Notifications("Announcement", key, currentUser.getDisplayName(), currentUser.getPhotoUrl().toString(), notifyRef.getKey());
-                notifyRef.setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                });*/
 
                 showMessage("Post Added successfully");
 
@@ -608,43 +612,12 @@ public class AnnounceFragment extends Fragment {
                 popupFileUploadName.setVisibility(View.GONE);
                 popAddPost.dismiss();
 
-                /*DatabaseReference notificationReference = FirebaseDatabase.getInstance()
-                        .getReference("Notifications").child(key);
-                notificationReference.setValue(key);*/
             }
         });
     }
 
     private void showMessage(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-
-    }
-    public void notice(String nf){
-
-
-
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(getContext())
-                        .setSmallIcon(R.drawable.stutech_logo) //set icon for notification
-                        .setContentTitle("Notifications Example") //set title of notification
-                        .setContentText(nf)//this is notification message
-                        .setAutoCancel(true) // makes auto cancel of notification
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT); //set priority of notification
-
-
-        Intent notificationIntent = new Intent(getContext(), HomeActivity.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //notification message will get at NotificationView
-        notificationIntent.putExtra("message", "This is a notification message");
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-
-        // Add as notification
-        NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, builder.build());
-
 
     }
 }

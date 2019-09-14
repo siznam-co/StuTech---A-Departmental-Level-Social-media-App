@@ -533,6 +533,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void addStudent(Student student, final String desig) {
 
+        FirebaseMessaging.getInstance().subscribeToTopic(getSection());
+
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Student").push();
 

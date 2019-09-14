@@ -56,6 +56,35 @@
         android:layout_below="@+id/line_between"
         android:orientation="vertical"
         android:background="@color/color_white">
+
+        <Button
+            android:id="@+id/button_fellows_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_between"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:text="  Fellows"
+            android:textSize="16sp"
+            android:textColor="@color/color_black"
+            android:drawableStart="@drawable/ic_group_black_24dp"
+            android:textAllCaps="false"
+            android:textAlignment="textStart"/>
+
+        <Button
+            android:id="@+id/button_teachers_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_between"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:text="  Teachers"
+            android:textSize="16sp"
+            android:textColor="@color/color_black"
+            android:drawableStart="@drawable/ic_school_black_24dp"
+            android:textAllCaps="false"
+            android:textAlignment="textStart"/>
+
         <Button
             android:id="@+id/button_upload_menu_fragment"
             android:layout_width="match_parent"

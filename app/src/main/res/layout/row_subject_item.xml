@@ -4,23 +4,22 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    android:layout_margin="5dp"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:background="@drawable/shadow_border_rectangle">
 
     <TextView
         android:id="@+id/row_subject_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="subject1"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:drawableEnd="@drawable/ic_navigate_next_black_24dp"
-        android:textColor="@color/color_black"
-        android:layout_margin="15dp"
-        android:maxLines="1"/>
+        android:textColor="@color/colorPrimaryDark"
+        android:maxLines="1"
+        android:background="?android:attr/selectableItemBackground"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_grey"
-        android:gravity="end"/>
+
 
 </LinearLayout>

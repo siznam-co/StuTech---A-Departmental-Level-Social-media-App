@@ -8,21 +8,57 @@
     tools:context=".NotificationFragment"
     android:background="@color/color_white">
 
-    <android.support.design.widget.AppBarLayout
+    <RelativeLayout
         android:id="@+id/action_bar_profile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="?android:attr/actionBarSize"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center_vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/profile_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorAccent"
-            app:title="profile"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <ImageView
+            android:id="@+id/back_btn_profile"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginStart="10dp"/>
 
-    </android.support.design.widget.AppBarLayout>
+        <TextView
+            android:id="@+id/title_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:text="User name"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/color_white"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@+id/back_btn_profile"/>
+
+        <ImageView
+            android:id="@+id/btn_edit_profile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_edit"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentEnd="true"
+            tools:targetApi="lollipop"
+            android:visibility="gone"
+            android:layout_marginEnd="10dp"/>
+
+        <ImageView
+            android:id="@+id/btn_chat_profile"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_forum_black_24dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentEnd="true"
+            tools:targetApi="lollipop"
+            android:visibility="gone"
+            android:layout_marginEnd="10dp"/>
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_below="@id/action_bar_profile"
@@ -44,16 +80,6 @@
                 android:cropToPadding="false"
                 android:src="@drawable/my_profile_pic"
                 android:layout_marginStart="10dp"/>
-
-            <ImageView
-                android:id="@+id/btn_edit_profile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_edit"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_alignParentEnd="true"
-                tools:targetApi="lollipop"
-                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/profile_name"

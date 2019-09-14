@@ -41,7 +41,7 @@ public class MenuFragment extends Fragment {
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     RelativeLayout relativeLayoutTop;
-    Button btnUploads, btnSettings, btnLogout;
+    Button btnUploads, btnSettings, btnLogout, btnFellows, btnTeachers ;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -73,6 +73,13 @@ public class MenuFragment extends Fragment {
         btnUploads = fragmentView.findViewById(R.id.button_upload_menu_fragment);
         btnSettings = fragmentView.findViewById(R.id.button_settings_menu_fragment);
         btnLogout = fragmentView.findViewById(R.id.button_logout_menu_fragment);
+        btnFellows = fragmentView.findViewById(R.id.button_fellows_menu_fragment);
+        btnTeachers = fragmentView.findViewById(R.id.button_teachers_menu_fragment);
+
+        if(HomeActivity.designation.equals("Teacher")){
+            btnFellows.setText("  Students");
+            btnTeachers.setText("  Colleagues");
+        }
 
         UserName.setText(currentUser.getDisplayName());
 
@@ -85,6 +92,24 @@ public class MenuFragment extends Fragment {
                 Intent goToProfileActivity = new Intent(getActivity(), ProfileActivity.class);
                 goToProfileActivity.putExtra("userID", currentUser.getUid());
                 startActivity(goToProfileActivity);
+            }
+        });
+
+        btnFellows.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToFriendsActivity = new Intent(getActivity(), FriendsActivity.class);
+                goToFriendsActivity.putExtra("desig", "Student" );
+                startActivity(goToFriendsActivity);
+            }
+        });
+
+        btnTeachers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToFriendsActivity = new Intent(getActivity(), FriendsActivity.class);
+                goToFriendsActivity.putExtra("desig", "Teacher" );
+                startActivity(goToFriendsActivity);
             }
         });
 

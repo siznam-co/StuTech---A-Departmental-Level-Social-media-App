@@ -126,7 +126,7 @@ public class CommentActivity extends AppCompatActivity {
                     commentList.add(comment) ;
                 }
 
-                Collections.reverse(commentList);
+                //Collections.reverse(commentList);
 
                 commentAdapter = new CommentAdapter(getApplicationContext(), commentList);
                 commentRecyclerView.setAdapter(commentAdapter);

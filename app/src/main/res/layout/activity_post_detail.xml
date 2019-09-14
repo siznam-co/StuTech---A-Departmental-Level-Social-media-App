@@ -77,13 +77,43 @@
 
 
             <ImageView
-                android:id="@+id/post_options"
+                android:id="@+id/post_delete"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/ic_more_horiz_black_24dp"
+                android:src="@drawable/ic_delete_forever_black_24dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:visibility="gone"
+                android:layout_toStartOf="@+id/tag_teacher"/>
+
+            <TextView
+                android:id="@+id/tag_teacher"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:text="T"
+                android:gravity="center"
+                android:layout_marginTop="4dp"
+                android:textSize="16sp"
+                android:textColor="@color/color_red"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/dialog_border_black"
+                android:visibility="invisible"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/tag_student"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:text="S"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/RegisterHere"
+                android:background="@drawable/dialog_border_black"
+                android:visibility="invisible"
                 android:layout_alignParentEnd="true"/>
 
 
@@ -115,26 +145,46 @@
             android:layout_marginEnd="8dp"
             android:text="description" />
 
-        <ImageView
-            android:scaleType="fitCenter"
-            android:id="@+id/row_post_img"
+        <RelativeLayout
+            android:id="@+id/items_attached_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
-            android:layout_marginBottom="1dp" />
+            android:visibility="visible">
 
-        <TextView
-            android:id="@+id/file_download_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/color_grey"
-            android:padding="10dp"
-            android:paddingStart="20dp"
-            android:text="file.ext"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:maxLines="2"/>
+            <ImageView
+                android:scaleType="fitCenter"
+                android:id="@+id/row_post_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_marginBottom="1dp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/file_download_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_grey"
+                android:padding="10dp"
+                android:paddingStart="20dp"
+                android:text="file.ext"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:maxLines="2"/>
+
+            <ImageView
+                android:id="@+id/downloadPost"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/ic_file_download_black_24dp" />
+
+        </RelativeLayout>
+
+
 
         <TextView
             android:layout_width="match_parent"
@@ -143,16 +193,16 @@
             android:textSize="1sp"/>
 
         <RelativeLayout
-            android:id="@+id/bottom_post_detail_layout"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginStart="3dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:padding="3dp">
             <ImageView
                 android:id="@+id/react_love"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical"
@@ -162,7 +212,7 @@
 
             <ImageView
                 android:id="@+id/un_react_love"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical"
@@ -180,17 +230,18 @@
                 android:layout_alignTop="@+id/react_love"
                 android:layout_alignBottom="@id/react_love"
                 android:gravity="center"
-                android:paddingBottom="4dp"
+                android:paddingBottom="2dp"
                 android:textSize="10sp"/>
 
             <ImageView
                 android:id="@+id/comment"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="7dp"
                 android:background="@drawable/ic_mode_comment_black_24dp"
-                android:layout_toEndOf="@id/react_love"/>
+                android:layout_toEndOf="@id/react_love"
+                android:layout_marginTop="2dp"/>
 
             <TextView
                 android:id="@+id/no_of_comments"
@@ -207,21 +258,14 @@
                 android:textSize="10sp"/>
             <ImageView
                 android:id="@+id/reminderBell"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@drawable/reminder_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_add_alarm_black_24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="6dp"
                 android:layout_toEndOf="@id/comment"/>
 
-            <ImageView
-                android:id="@+id/downloadPost"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="6dp"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/ic_file_download_black_24dp" />
+
 
         </RelativeLayout>
 

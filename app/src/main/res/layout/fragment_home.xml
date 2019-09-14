@@ -11,7 +11,8 @@
         android:id="@+id/home_top_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/color_white">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/my_profile_pic_home"
@@ -20,15 +21,18 @@
             android:src="@drawable/my_profile_pic"
             android:layout_alignParentStart="true"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="5dp" />
+            android:layout_marginStart="5dp"
+            android:background="@drawable/register_image_border"
+            android:padding="3dp"/>
         <Button
             android:id="@+id/fab"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:background="@drawable/rounded_button2"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_button"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="7dp"
+            android:textColor="@color/color_white"
+            android:layout_marginBottom="7dp"
             android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/my_profile_pic_home"
             android:layout_toStartOf="@+id/fab_filter"
@@ -40,14 +44,28 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:src="@drawable/filter_icon"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:layout_toStartOf="@+id/fab_chat"
+            android:background="@drawable/rounded_button"/>
+
+        <ImageView
+            android:id="@+id/fab_chat"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/ic_forum_black_24dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/rounded_background"
             android:paddingTop="8dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="8dp"
             android:paddingEnd="10dp"
-            android:paddingStart="10dp"/>
+            android:paddingStart="10dp"
+            android:background="@drawable/rounded_button"/>
 
     </RelativeLayout>
 

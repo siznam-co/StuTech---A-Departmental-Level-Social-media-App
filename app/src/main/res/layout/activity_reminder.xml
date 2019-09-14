@@ -7,6 +7,7 @@
     tools:context=".ReminderActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:background="@color/color_white"
     android:padding="10dp">
 
     <TextView
@@ -14,7 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter your task"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/edittext_button_style_rounded"
+        android:gravity="center"
+        android:textColor="@color/color_black"
+        android:textStyle="bold"
+        android:textSize="20sp"/>
 
     <TimePicker
         android:id="@+id/timePicker"

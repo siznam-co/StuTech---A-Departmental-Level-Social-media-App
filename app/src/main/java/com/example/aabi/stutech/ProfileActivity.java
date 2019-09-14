@@ -33,9 +33,9 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseUser currentUser;
 
 
-    TextView editName, editRollNo, editSemester, editSection, editSession, tvRollHeading;
+    TextView editName, editRollNo, editSemester, editSection, editSession, tvRollHeading, titleBar;
     TextView designation;
-    ImageView imageView, btnEditProfile;
+    ImageView imageView, btnEditProfile, btnChatProfile, backButton;
     LinearLayout subjectView, sectionsForTeacher;
     RelativeLayout studentLayout, teacherLayout;
 
@@ -49,11 +49,14 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        backButton = findViewById(R.id.back_btn_profile);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        titleBar = findViewById(R.id.title_bar);
         editName = (TextView) findViewById(R.id.profile_name);
         editRollNo = (TextView) findViewById(R.id.profile_roll_no);
         imageView = (ImageView) findViewById(R.id.profile_pic);
@@ -67,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         teacherLayout = findViewById(R.id.profile_teacher_layout);
         tvRollHeading = findViewById(R.id.roll_no_heading_below);
         btnEditProfile = findViewById(R.id.btn_edit_profile);
+        btnChatProfile = findViewById(R.id.btn_chat_profile);
 
         DatabaseReference UserIdReference = FirebaseDatabase.getInstance().getReference("UserIDs").child(userID);
 
@@ -83,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
                             teacherLayout.setVisibility(View.VISIBLE);
                             tvRollHeading.setText("Teacher Id# ");
                             final Teacher teacher = dataSnapshot.getValue(Teacher.class);
-                            getSupportActionBar().setTitle(teacher.getName());
+                            titleBar.setText(teacher.getName());
                             if(currentUser.getUid().equals(userID)){
 
                                 btnEditProfile.setVisibility(View.VISIBLE);
@@ -102,6 +106,19 @@ public class ProfileActivity extends AppCompatActivity {
                                 Glide.with(getApplicationContext()).load(currentUser.getPhotoUrl()).into(imageView);
 
                             }else{
+                                btnChatProfile.setVisibility(View.VISIBLE);
+                                btnChatProfile.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent goToMessageActivity = new Intent(getApplicationContext(), MessageActivity.class);
+                                        goToMessageActivity.putExtra("userKey", teacher.getTeacherKey());
+                                        goToMessageActivity.putExtra("designation", teacher.getDesignation());
+                                        goToMessageActivity.putExtra("userName", teacher.getName());
+                                        goToMessageActivity.putExtra("userPhoto", teacher.getUserPhoto());
+                                        goToMessageActivity.putExtra("userId", teacher.getUserId());
+                                        startActivity(goToMessageActivity);
+                                    }
+                                });
                                 editName.setText(teacher.getName());
                                 editRollNo.setText(teacher.getTeacherId());
                                 editSemester.setText(teacher.getSemester());
@@ -131,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             studentLayout.setVisibility(View.VISIBLE);
                             final Student student = dataSnapshot.getValue(Student.class);
-                            getSupportActionBar().setTitle(student.getName());
+                            titleBar.setText(student.getName());
                             if(currentUser.getUid().equals(userID)){
                                 btnEditProfile.setVisibility(View.VISIBLE);
                                 btnEditProfile.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +163,18 @@ public class ProfileActivity extends AppCompatActivity {
                                 editName.setText(currentUser.getDisplayName());
                                 Glide.with(getApplicationContext()).load(currentUser.getPhotoUrl()).into(imageView);
                             }else{
+                                btnChatProfile.setVisibility(View.VISIBLE);
+                                btnChatProfile.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent goToMessageActivity = new Intent(getApplicationContext(), MessageActivity.class);
+                                        goToMessageActivity.putExtra("designation", student.getDesignation());
+                                        goToMessageActivity.putExtra("userName", student.getName());
+                                        goToMessageActivity.putExtra("userPhoto", student.getUserPhoto());
+                                        goToMessageActivity.putExtra("userId", student.getUserId());
+                                        startActivity(goToMessageActivity);
+                                    }
+                                });
                                 editName.setText(student.getName());
                                 Glide.with(getApplicationContext()).load(student.getUserPhoto()).into(imageView);
                             }
@@ -204,9 +233,4 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
 }

@@ -1,12 +1,16 @@
 package com.example.aabi.stutech;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,46 +69,228 @@ public class MyService extends FirebaseMessagingService {
                     Desc = senderName + " made an Announcement";
                 else
                     Desc = subjectName+" has new post from "+senderName;
-                sendMessageNotification(postKey, Desc, senderName);
+                sendPostNotification(postKey, Desc, senderName);
             }else if(dataType.equals("like")){
                 String postKey = remoteMessage.getData().get("postKey");
                 String senderName = remoteMessage.getData().get("senderName");
                 String subjectName = remoteMessage.getData().get("subjectName");
                 String userPhoto = remoteMessage.getData().get("userPhoto");
                 String Desc = senderName+" liked your post.";
-                sendMessageNotification(postKey, Desc, senderName);
-            }else{
+                sendPostNotification(postKey, Desc, senderName);
+            }else if(dataType.equals("message")){
+                String  message = remoteMessage.getData().get("message");
+                String  senderId = remoteMessage.getData().get("senderId");
+                String  senderName = remoteMessage.getData().get("senderName");
+                String  designation = remoteMessage.getData().get("designation");
+                String  RecieverName = remoteMessage.getData().get("RecieverName");
+                String  userPhoto = remoteMessage.getData().get("userPhoto");
+                sendMessageNotification(message, senderId, senderName, designation, RecieverName, userPhoto);
+            }else if(dataType.equals("attend")){
+                String lectures = remoteMessage.getData().get("lectures");
+                String section = remoteMessage.getData().get("section");
+                String subjectName = remoteMessage.getData().get("subjectName");
+
+                String Desc = "New Attendance today. Subject: "+subjectName+ " | Section: "+section;
+                sendAttendNotify(lectures, Desc, subjectName);
+            }else if(dataType.equals("marks")){
+                String  marks = remoteMessage.getData().get("marks");
+                String  userId = remoteMessage.getData().get("userId");
+                String  subjectName = remoteMessage.getData().get("subjectName");
+                String  marksType = remoteMessage.getData().get("marksType");
+
+                String Desc = "Subject = "+subjectName+ " | Marks Type = " +marksType;
+                String title = marksType+ " marks = "+marks;
+
+                sendMarksNotification(userId, Desc, title, subjectName);
+            }else {
                 String postKey = remoteMessage.getData().get("postKey");
                 String senderName = remoteMessage.getData().get("senderName");
                 String subjectName = remoteMessage.getData().get("subjectName");
                 String userPhoto = remoteMessage.getData().get("userPhoto");
 
                 String Desc = senderName+" commented on your post.";
-                sendMessageNotification(postKey, Desc, senderName);
+                sendPostNotification(postKey, Desc, senderName);
             }
         }
 
-        private void sendMessageNotification(String postKey, String Desc, String senderName){
+    private void sendMarksNotification(String userId, String desc, String title, String subjectName) {
+        Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
+
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+            NotificationChannel channel =
+                    new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        //get the notification id
+        int notificationId = buildNotificationId("6473geg34");
+
+        // Instantiate a Builder object.
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "MyNotifications");
+        // Creates an Intent for the Activity
+        Intent pendingIntent = new Intent(getApplicationContext(), AttendanceActivity.class);
+        pendingIntent.putExtra("subjectName", subjectName);
+        // Sets the Activity to start in a new, empty task
+        pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Creates the PendingIntent
+        PendingIntent notifyPendingIntent =
+                PendingIntent.getActivity(
+                        getApplicationContext(),
+                        0,
+                        pendingIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        //add properties to the builder
+        builder.setSmallIcon(R.drawable.stutech_logo)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.ic_notifications_black_24dp))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentTitle(desc)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setContentText(title);
+
+        builder.setContentIntent(notifyPendingIntent);
+        NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+        mNotificationManager.notify(notificationId, builder.build());
+    }
+
+    private void sendAttendNotify(String lectures, String desc, String subjectName){
+
+
+        Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
+
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+            NotificationChannel channel =
+                    new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        //get the notification id
+        int notificationId = buildNotificationId("64573ydggeg34");
+
+        // Instantiate a Builder object.
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "MyNotifications");
+        // Creates an Intent for the Activity
+        Intent pendingIntent = new Intent(getApplicationContext(), AttendanceActivity.class);
+        pendingIntent.putExtra("subjectName", subjectName);
+        // Sets the Activity to start in a new, empty task
+        pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Creates the PendingIntent
+        PendingIntent notifyPendingIntent =
+                PendingIntent.getActivity(
+                        getApplicationContext(),
+                        0,
+                        pendingIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        //add properties to the builder
+        builder.setSmallIcon(R.drawable.stutech_logo)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.ic_notifications_black_24dp))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentTitle(desc)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setContentText("Lectures till today = "+lectures);
+
+        builder.setContentIntent(notifyPendingIntent);
+        NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+        mNotificationManager.notify(notificationId, builder.build());
+
+    }
+
+
+    private void sendMessageNotification(String message, String senderId, String senderName, String designation, String recieverName, String userPhoto) {
+
+        if(MessageActivity.active){
+            Log.d(TAG, "self notification: no need of notification");
+        }
+        else{
+
+            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+                NotificationChannel channel =
+                        new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager manager = getSystemService(NotificationManager.class);
+                manager.createNotificationChannel(channel);
+            }
+            Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
+
+            //get the notification id
+            int notificationId = buildNotificationId("3");
+
+            // Instantiate a Builder object.
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "MyNotifications");
+            // Creates an Intent for the Activity
+            Intent pendingIntent = new Intent(getApplicationContext(), MessageActivity.class);
+            pendingIntent.putExtra("designation", designation);
+            pendingIntent.putExtra("userName", recieverName);
+            pendingIntent.putExtra("userPhoto", userPhoto);
+            pendingIntent.putExtra("userId", senderId);
+            // Sets the Activity to start in a new, empty task
+            pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            // Creates the PendingIntent
+            PendingIntent notifyPendingIntent =
+                    PendingIntent.getActivity(
+                            getApplicationContext(),
+                            0,
+                            pendingIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+
+            //add properties to the builder
+            builder.setSmallIcon(R.drawable.stutech_logo)
+                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                            R.drawable.ic_notifications_black_24dp))
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setContentTitle("New Message from "+senderName)
+                    .setAutoCancel(true)
+                    .setOnlyAlertOnce(true)
+                    .setContentText(message);
+
+            builder.setContentIntent(notifyPendingIntent);
+            NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
+            mNotificationManager.notify(notificationId, builder.build());
+        }
+
+    }
+
+    private void sendPostNotification(String postKey, String Desc, String senderName){
 
             if(senderName.equals(FirebaseAuth.getInstance().getCurrentUser().getDisplayName().toString())){
                 Log.d(TAG, "self notification: no need of notification");
             }else {
+
+                if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+                    NotificationChannel channel =
+                            new NotificationChannel("MyNotifications","MyNotifications", NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager manager = getSystemService(NotificationManager.class);
+                    manager.createNotificationChannel(channel);
+                }
                 Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
 
                 //get the notification id
                 int notificationId = buildNotificationId(postKey);
 
                 // Instantiate a Builder object.
-                Notification.Builder builder = new Notification.Builder(this);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "MyNotifications");
                 // Creates an Intent for the Activity
-                Intent pendingIntent = new Intent(this, PostDetailActivity.class);
-                pendingIntent.putExtra("postKey", postKey);
+                Intent pendingIntent = new Intent(getApplicationContext(), PostDetailActivity.class);
+                if(postKey.equals("")){
+                    pendingIntent.putExtra("subjectName", senderName);
+                }else{
+                    pendingIntent.putExtra("postKey", postKey);
+                }
                 // Sets the Activity to start in a new, empty task
                 pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 // Creates the PendingIntent
                 PendingIntent notifyPendingIntent =
                         PendingIntent.getActivity(
-                                this,
+                                getApplicationContext(),
                                 0,
                                 pendingIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -121,9 +307,7 @@ public class MyService extends FirebaseMessagingService {
                         .setContentText(Desc);
 
                 builder.setContentIntent(notifyPendingIntent);
-                NotificationManager mNotificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
                 mNotificationManager.notify(notificationId, builder.build());
             }
         }

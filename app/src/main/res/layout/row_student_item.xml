@@ -4,9 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
-    android:background="@color/color_grey"
-    android:layout_marginBottom="5dp">
+    android:layout_height="wrap_content"
+    android:background="@drawable/edittext_button_style_rounded">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -23,19 +22,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="TextView"
         android:textColor="@color/color_black"
-        android:textSize="25sp"/>
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/attendance_roll_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="roll no"
+        android:layout_below="@id/row_student_title"
+        android:layout_toEndOf="@id/row_student_profile_img"/>
 
     <RadioGroup
         android:id="@+id/markAttendance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginEnd="45dp"
+        android:layout_marginEnd="5dp"
         android:layout_alignParentEnd="true">
 
         <RadioButton
@@ -55,29 +60,5 @@
             android:textSize="18sp"/>
 
     </RadioGroup>
-    <ImageView
-        android:id="@+id/grey_submit_single_attendance"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignTop="@+id/row_student_title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="gone"
-        android:background="@drawable/ic_send_grey" />
-    <ImageView
-        android:id="@+id/submit_single_attendance"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignTop="@+id/row_student_title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/ic_send_black_24dp" />
-
 
 </RelativeLayout>

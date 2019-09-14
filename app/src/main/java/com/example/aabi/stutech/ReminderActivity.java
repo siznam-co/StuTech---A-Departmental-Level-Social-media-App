@@ -18,6 +18,7 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
 
     private int notificationId = 1;
     TextView textView;
+    String postKey, subjectName, todo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +31,11 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.setBtn).setOnClickListener(this);
         findViewById(R.id.cancelBtn).setOnClickListener(this);
 
-        //textView.setText(getIntent().getExtras().getString("title"));
-        textView.setText("sdkfjskdlf");
+        postKey = getIntent().getExtras().getString("postKey");
+        todo = getIntent().getExtras().getString("title");
+        textView.setText(getIntent().getExtras().getString("subjectName"));
+        subjectName = getIntent().getExtras().getString("subjectName");
+        //textView.setText("sdkfjskdlf");
     }
 
     @Override
@@ -41,7 +45,9 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
         // Set notificationId & text.
         Intent intent = new Intent(ReminderActivity.this, AlarmReceiver.class);
         intent.putExtra("notificationId", notificationId);
-        intent.putExtra("todo", textView.getText().toString());
+        intent.putExtra("todo", todo);
+        intent.putExtra("postKey", postKey);
+        intent.putExtra("subjectName", subjectName);
 
         // getBroadcast(context, requestCode, intent, flags)
         PendingIntent alarmIntent = PendingIntent.getBroadcast(ReminderActivity.this, 0,

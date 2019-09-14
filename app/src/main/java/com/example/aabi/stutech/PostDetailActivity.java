@@ -2,10 +2,13 @@ package com.example.aabi.stutech;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -19,11 +22,13 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +44,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -53,7 +59,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     TextView tvTitle, tvUserName, tvDescription, tvSubjectName, tvFileDownloadName, tvPostDate, tvNoOfComments, tvNoOfLikes;
     ImageView imgPost;
-    ImageView imgPostProfile, imagePost, imageHeart, imageFilledHeart, btnComment, btnDownload, btnPopupMenu;
+    ImageView imgPostProfile, btnReminder, imageHeart, imageFilledHeart, btnComment, btnDownload, btnPopupMenu;
     String postKey;
     Query query;
     FirebaseAuth mAuth;
@@ -64,6 +70,7 @@ public class PostDetailActivity extends AppCompatActivity {
     RecyclerView commentRecyclerView;
     CommentAdapter commentAdapter;
     List<Comment> commentList = new ArrayList<>();
+    TextView tagTeacher, tagStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +94,11 @@ public class PostDetailActivity extends AppCompatActivity {
         imgPost = findViewById(R.id.row_post_img);
         tvFileDownloadName = findViewById(R.id.file_download_name);
         imgPostProfile = findViewById(R.id.row_post_profile_img);
-        imagePost = findViewById(R.id.reminderBell);
+        btnReminder = findViewById(R.id.reminderBell);
         imageHeart = findViewById(R.id.react_love);
         imageFilledHeart = findViewById(R.id.un_react_love);
         btnDownload = findViewById(R.id.downloadPost);
-        btnPopupMenu = findViewById(R.id.post_options);
+        btnPopupMenu = findViewById(R.id.post_delete);
         btnComment = findViewById(R.id.comment);
         tvNoOfComments = findViewById(R.id.no_of_comments);
         tvNoOfLikes = findViewById(R.id.no_of_Likes);
@@ -102,6 +109,8 @@ public class PostDetailActivity extends AppCompatActivity {
         commentRecyclerView  = findViewById(R.id.commentRV);
         commentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentRecyclerView.setHasFixedSize(true);
+        tagStudent = findViewById(R.id.tag_student);
+        tagTeacher = findViewById(R.id.tag_teacher);
 
         query = FirebaseDatabase.getInstance().getReference("Posts").child(postKey);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,6 +128,25 @@ public class PostDetailActivity extends AppCompatActivity {
                 tvSubjectName.setText(post.getSubjectName());
                 tvTitle.setText(post.getTitle());
                 tvDescription.setText(post.getDescription());
+
+                DatabaseReference tagRef = FirebaseDatabase.getInstance().getReference("UserIDs").child(post.getUserId()).child("designation");
+                tagRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String desig = dataSnapshot.getValue(String.class);
+                        if(desig.equals("Teacher")){
+                            tagTeacher.setVisibility(View.VISIBLE);
+                        }else{
+                            tagStudent.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 if((post.getFileURL()).equals("No")){
                     imgPost.setVisibility(View.GONE);
                     tvFileDownloadName.setVisibility(View.GONE);
@@ -138,16 +166,17 @@ public class PostDetailActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext()).load(post.getUserPhoto()).into(imgPostProfile);
 
                 //TODO: To set reminder
-                imagePost.setOnClickListener(new View.OnClickListener(){
+                btnReminder.setOnClickListener(new View.OnClickListener(){
 
                     @Override
                     public void onClick(View v) {
 
-                        imagePost.startAnimation(anim);
+                        btnReminder.startAnimation(anim);
                         Intent intent = new Intent(getApplicationContext(),ReminderActivity.class);
-                    /*intent.putExtra("title", mData.get(p).getTitle());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    */
+                        intent.putExtra("subjectName", "Set Reminder for "+post.getSubjectName());
+                        intent.putExtra("title", "Todo: " + post.getTitle());
+                        intent.putExtra("postKey", post.getPostKey());
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                         getApplicationContext().startActivity(intent);
                         //finish();
                     }
@@ -188,13 +217,6 @@ public class PostDetailActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 imageFilledHeart.setVisibility(View.VISIBLE);
                                 imageHeart.setVisibility(View.INVISIBLE);
-                       /* DatabaseReference notifyRef = FirebaseDatabase.getInstance().getReference("Notifications").push();
-                        Notifications notification = new Notifications("like", post.getPostKey(), currentUser.getDisplayName(), currentUser.getPhotoUrl().toString(), notifyRef.getKey());
-                        notifyRef.setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                                        }
-                        });*/
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -214,27 +236,6 @@ public class PostDetailActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 imageHeart.setVisibility(View.VISIBLE);
                                 imageFilledHeart.setVisibility(View.INVISIBLE);
-                        /*final DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("Notifications");
-                        final Query query = FirebaseDatabase.getInstance().getReference("Notifications")
-                                .orderByChild("type").equalTo("like");
-                        query.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                                    Notifications notifications = snapshot.getValue(Notifications.class);
-                                    if(notifications.getUser().equals(currentUser.getDisplayName()) && notifications.getRef().equals(post.getPostKey())){
-                                        delRef.child(notifications.getKey()).removeValue();
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });*/
-
 
                             }
                         });
@@ -245,17 +246,6 @@ public class PostDetailActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         btnComment.startAnimation(anim);
                         editTextComment.requestFocus();
-                        /*Intent postDetailActivity = new Intent(getApplicationContext(), CommentActivity.class);
-                *//*postDetailActivity.putExtra("postImage",post.getFileURL());
-                postDetailActivity.putExtra("description",post.getDescription());
-                postDetailActivity.putExtra("userPhoto",post.getUserPhoto());*//*
-                        postDetailActivity.putExtra("postKey",post.getPostKey());
-                        // will fix this later i forgot to add user name to post object
-                        //postDetailActivity.putExtra("userName",post.getUsername);
-                *//*long timestamp  = (long) post.getTimeStamp();
-                postDetailActivity.putExtra("postDate",timestamp) ;*//*
-                        //Toast.makeText(getApplicationContext(),"Get lost",Toast.LENGTH_SHORT).show();
-                        getApplicationContext().startActivity(postDetailActivity);*/
                     }
                 });
 
@@ -290,46 +280,42 @@ public class PostDetailActivity extends AppCompatActivity {
                 });
 
 
-                btnPopupMenu.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Creating the instance of PopupMenu
-                        Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.MyPopupMenu);
-                        PopupMenu popup = new PopupMenu(wrapper, v);
-                        //PopupMenu popup = new PopupMenu(getApplicationContext(), btnPopupMenu);
-                        //Inflating the Popup using xml file
-                        //popup.getMenuInflater().inflate(R.menu.post_option_items, popup.getMenu());
+                if(post.getUserName().equals(currentUser.getDisplayName())){
+                    btnPopupMenu.setVisibility(View.VISIBLE);
+                    btnPopupMenu.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Dialog sureDialog = new Dialog(PostDetailActivity.this);
+                            sureDialog.setContentView(R.layout.acknowledgement_dialog);
+                            sureDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            sureDialog.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
+                            sureDialog.getWindow().getAttributes().gravity = Gravity.CENTER_VERTICAL;
 
-                        popup.getMenu().add(Menu.NONE,1,1,"Share...");
-                        popup.getMenu().add(Menu.NONE,2,2,"Report...");
-                        if(currentUser.getUid().equals(post.getUserId()))
-                            popup.getMenu().add(Menu.NONE,3,3,"Delete");
-                        popup.show(); //showing popup menu
+                            TextView sureDialogText = sureDialog.findViewById(R.id.sure_dialog_text);
+                            sureDialogText.setText("Are your sure? Want to delete this post of you?");
 
-                        //registering popup with OnMenuItemClickListener
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            public boolean onMenuItemClick(MenuItem item) {
-                                int id = item.getItemId();
+                            Button sureDelete = sureDialog.findViewById(R.id.sure_delete);
+                            Button cancelDelete =  sureDialog.findViewById(R.id.cancel_delete);
 
-                                //noinspection SimplifiableIfStatement
-                                switch (id){
-                                    case 1:
-                                        Toast.makeText(getApplicationContext(),"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 3:
-                                        deletePost(post.getPostKey(),post.getFileURL().trim());
-                                        break;
-                                    case 2:
-                                        Toast.makeText(getApplicationContext(),"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                                        break;
+                            sureDialog.show();
+
+                            sureDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    deletePost(post.getPostKey(),post.getFileURL().trim());
+                                    sureDialog.hide();
                                 }
-                                //Toast.makeText(getApplicationContext(),"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                                return true;
-                            }
-                        });
+                            });
+                            cancelDelete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sureDialog.hide();
+                                }
+                            });
 
-                    }
-                });
+                        }
+                    });
+                }
 
                 //Counting no of comments on single posts
                 DatabaseReference gRef = FirebaseDatabase.getInstance().getReference("Comment").child(post.getPostKey());
@@ -450,7 +436,56 @@ public class PostDetailActivity extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(time);
-        String date = DateFormat.format("dd-MM-yyyy @ HH:mm",calendar).toString();
+        String tempMonth = DateFormat.format("MM",calendar).toString();
+        switch (tempMonth){
+            case "01":
+                tempMonth = "January";
+                break;
+            case "02":
+                tempMonth = "February";
+                break;
+            case "03":
+                tempMonth = "March";
+                break;
+            case "04":
+                tempMonth = "April";
+                break;
+            case "05":
+                tempMonth = "May";
+                break;
+            case "06":
+                tempMonth = "June";
+                break;
+            case "07":
+                tempMonth = "July";
+                break;
+            case "08":
+                tempMonth = "August";
+                break;
+            case "09":
+                tempMonth = "September";
+                break;
+            case "10":
+                tempMonth = "October";
+                break;
+            case "11":
+                tempMonth = "November";
+                break;
+            case "12":
+                tempMonth = "December";
+                break;
+
+        }
+        String timing = " AM";
+
+        int hour = Integer.parseInt(DateFormat.format("HH",calendar).toString());
+        if(hour>12){
+            hour = hour - 12;
+            timing = " PM";
+        }
+
+        String date = DateFormat.format("dd",calendar).toString() + " " +
+                tempMonth+ " at "+ hour + DateFormat.format(":mm",calendar).toString() + timing;
         return date;
 
 

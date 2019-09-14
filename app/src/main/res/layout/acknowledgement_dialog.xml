@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/edittext_button_style_rounded"
+    android:layout_margin="20dp"
+    android:paddingTop="20dp">
+
+    <ImageView
+        android:id="@+id/warn_img"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_warning_black_24dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alert!"
+        android:textSize="25sp"
+        android:layout_toEndOf="@+id/warn_img"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/color_black"
+        android:layout_below="@+id/warn_img"
+        android:layout_marginTop="5dp"/>
+    <TextView
+        android:id="@+id/sure_dialog_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Are your sure"
+        android:textSize="20sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/line"/>
+
+    <Button
+        android:id="@+id/sure_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_below="@+id/sure_dialog_text"
+        android:text="Sure!"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_background"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/color_white"
+        android:layout_margin="25dp"
+        android:textAllCaps="false"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/dialog_mid_point"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/dialog_mid_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#f4f4f4"/>
+
+    <Button
+        android:id="@+id/cancel_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_below="@+id/sure_dialog_text"
+        android:text="Cancel!"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_button2"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/color_white"
+        android:layout_margin="25dp"
+        android:textAllCaps="false"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/dialog_mid_point"
+        android:gravity="center"/>
+
+</RelativeLayout>

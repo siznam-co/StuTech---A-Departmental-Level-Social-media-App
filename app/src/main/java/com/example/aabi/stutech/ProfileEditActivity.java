@@ -40,6 +40,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
@@ -163,6 +164,8 @@ public class ProfileEditActivity extends AppCompatActivity implements View.OnCli
                     for(String subject: subjectList){
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(subject+"");
                     }
+
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(student.getSection());
 
                     Matcher matcher = Pattern.compile("\\d+").matcher(student.getSemester());
                     matcher.find();
@@ -520,6 +523,7 @@ public class ProfileEditActivity extends AppCompatActivity implements View.OnCli
                                             .setPhotoUri(uri)
                                             .build();
                                     currentUser.updateProfile(profleUpdate);
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -542,7 +546,7 @@ public class ProfileEditActivity extends AppCompatActivity implements View.OnCli
             });
 
 
-        }//TODO: if user has changed picture
+        }//TODO: if user has not change the picture
         else{
             if (designation.equals("Student")) {
                 // create student Object
@@ -646,18 +650,15 @@ public class ProfileEditActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onBackPressed() {
-        /*if ( getFragmentManager().getBackStackEntryCount() > 0)
-        {
-            getFragmentManager().popBackStack();
-            return;
-        }*/
-
         subscribeToUserTopic();
         super.onBackPressed();
         finish();
     }
 
     private void subscribeToUserTopic() {
+        if(designation.equals("Student")){
+            FirebaseMessaging.getInstance().subscribeToTopic(getSection());
+        }
         FirebaseMessaging.getInstance().subscribeToTopic(currentUser.getUid().toString());
         FirebaseMessaging.getInstance().subscribeToTopic("announce");
         for(String subject: subjectList){

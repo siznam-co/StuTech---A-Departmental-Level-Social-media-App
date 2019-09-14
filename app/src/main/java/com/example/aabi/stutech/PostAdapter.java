@@ -3,10 +3,13 @@ package com.example.aabi.stutech;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -15,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +26,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +45,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -51,9 +61,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     private List<Post> mData ;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
-
-
-
+    public static final int TYPE_ANNOUNCE = 0;
+    public static final int TYPE_POST = 1;
 
     public PostAdapter(Context mContext, List<Post> mData) {
         this.mContext = mContext;
@@ -63,9 +72,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View row = LayoutInflater.from(mContext).inflate(R.layout.row_post_item,parent,false);
-        return new MyViewHolder(row);
+        if(viewType == TYPE_ANNOUNCE){
+            View row = LayoutInflater.from(mContext).inflate(R.layout.row_announce_item,parent,false);
+            return new MyViewHolder(row);
+        }else{
+            View row = LayoutInflater.from(mContext).inflate(R.layout.row_post_item,parent,false);
+            return new MyViewHolder(row);
+        }
     }
 
     @Override
@@ -78,15 +91,80 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
         long timestamp  = (long) mData.get(position).getTimeStamp();
 
         holder.tvUserName.setText(mData.get(position).getUserName());
+        Glide.with(mContext).load(mData.get(position).getUserPhoto()).into(holder.imgPostProfile);
         holder.tvPostDate.setText(timestampToString(timestamp));
-        holder.tvSubjectName.setText(mData.get(position).getSubjectName());
         holder.tvTitle.setText(mData.get(position).getTitle());
         holder.tvDescription.setText(mData.get(position).getDescription());
+
+        holder.imgPostProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToProfileActivity = new Intent(mContext, ProfileActivity.class);
+                goToProfileActivity.putExtra("userID", mData.get(position).getUserId());
+                mContext.startActivity(goToProfileActivity);
+            }
+        });
+
+        DatabaseReference tagRef = FirebaseDatabase.getInstance().getReference("UserIDs").child(mData.get(position).getUserId()).child("designation");
+        tagRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String desig = dataSnapshot.getValue(String.class);
+                if(desig.equals("Teacher")){
+                    holder.tagTeacher.setVisibility(View.VISIBLE);
+                }else{
+                    holder.tagStudent.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        if(mData.get(position).getUserName().equals(currentUser.getDisplayName())){
+            holder.btnDelete.setVisibility(View.VISIBLE);
+            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Dialog sureDialog = new Dialog(mContext);
+                    sureDialog.setContentView(R.layout.acknowledgement_dialog);
+                    sureDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    sureDialog.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
+                    sureDialog.getWindow().getAttributes().gravity = Gravity.CENTER_VERTICAL;
+
+                    TextView sureDialogText = sureDialog.findViewById(R.id.sure_dialog_text);
+                    sureDialogText.setText("Are you sure? Want to delete this post of you?");
+
+                    Button sureDelete = sureDialog.findViewById(R.id.sure_delete);
+                    Button cancelDelete =  sureDialog.findViewById(R.id.cancel_delete);
+
+                    sureDialog.show();
+
+                    sureDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deletePost(mData.get(position).getPostKey(),mData.get(position).getFileURL().trim());
+                            sureDialog.hide();
+                        }
+                    });
+                    cancelDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            sureDialog.hide();
+                        }
+                    });
+
+                }
+            });
+        }
+
         if((mData.get(position).getFileURL()).equals("No")){
-            holder.imgPost.setVisibility(View.GONE);
-            holder.tvFileDownloadName.setVisibility(View.GONE);
+            //holder.itemsAttachedLayout.setVisibility(View.GONE);
         }
         else{
+            //holder.itemsAttachedLayout.setVisibility(View.VISIBLE);
             if(mData.get(position).getFileType().equals("camera") || mData.get(position).getFileType().equals("image")) {
                 holder.imgPost.setVisibility(View.VISIBLE);
                 holder.tvFileDownloadName.setVisibility(View.GONE);
@@ -98,245 +176,174 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
                 holder.tvFileDownloadName.setText(mData.get(position).getFileName());
             }
         }
-        Glide.with(mContext).load(mData.get(position).getUserPhoto()).into(holder.imgPostProfile);
 
-        holder.imgPostProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent goToProfileActivity = new Intent(mContext, ProfileActivity.class);
-                goToProfileActivity.putExtra("userID", mData.get(position).getUserId());
-                mContext.startActivity(goToProfileActivity);
-            }
-        });
+        if(!mData.get(position).getSubjectName().equals("announce")){
+            holder.tvSubjectName.setText(mData.get(position).getSubjectName());//
 
-        //TODO: To set reminder
-        holder.imagePost.setOnClickListener(new View.OnClickListener(){
+            //TODO: To set reminder
+            holder.btnReminder.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
 
-                holder.imagePost.startAnimation(anim);
-                Intent intent = new Intent(mContext,ReminderActivity.class);
-                    /*intent.putExtra("title", mData.get(p).getTitle());
+                    holder.btnReminder.startAnimation(anim);
+                    Intent intent = new Intent(mContext,ReminderActivity.class);
+                    intent.putExtra("subjectName", "Set Reminder for "+mData.get(position).getSubjectName());
+                    intent.putExtra("title", "Todo: " +mData.get(position).getTitle());
+                    intent.putExtra("postKey", mData.get(position).getPostKey());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    */
-                mContext.startActivity(intent);
-                //finish();
-            }
-        });
-
-        //TODO: React Love and Unreact Love
-
-        final DatabaseReference LikeReference = FirebaseDatabase.getInstance().getReference("Likes")
-                .child(mData.get(position).getPostKey());
-
-        LikeReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(currentUser.getUid()).exists()) {
-                    //do ur stuff
-                    holder.imageHeart.setVisibility(View.INVISIBLE);
-                    holder.imageFilledHeart.setVisibility(View.VISIBLE);
-                } else {
-                    //do something if not exists
-                    holder.imageHeart.setVisibility(View.VISIBLE);
-                    holder.imageFilledHeart.setVisibility(View.INVISIBLE);
+                    mContext.startActivity(intent);
+                    //finish();
                 }
+            });
 
-            }
+            //TODO: React Love and Unreact Love
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            final DatabaseReference LikeReference = FirebaseDatabase.getInstance().getReference("Likes")
+                    .child(mData.get(position).getPostKey()).child(currentUser.getUid());
 
-            }
-        });
-        final Likes likes = new Likes(currentUser.getUid(),currentUser.getDisplayName(), currentUser.getPhotoUrl().toString());
-        holder.imageHeart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.imageFilledHeart.startAnimation(anim);
-                LikeReference.child(currentUser.getUid()).setValue(likes).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        holder.imageFilledHeart.setVisibility(View.VISIBLE);
+            LikeReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        //do ur stuff
                         holder.imageHeart.setVisibility(View.INVISIBLE);
-                       /* DatabaseReference notifyRef = FirebaseDatabase.getInstance().getReference("Notifications").push();
-                        Notifications notification = new Notifications("like", mData.get(position).getPostKey(), currentUser.getDisplayName(), currentUser.getPhotoUrl().toString(), notifyRef.getKey());
-                        notifyRef.setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                                        }
-                        });*/
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showMessage("failed to like : "+e.getMessage());
-                    }
-                });
-            }
-        });
-
-        holder.imageFilledHeart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                LikeReference.child(currentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+                        holder.imageFilledHeart.setVisibility(View.VISIBLE);
+                    } else {
+                        //do something if not exists
                         holder.imageHeart.setVisibility(View.VISIBLE);
                         holder.imageFilledHeart.setVisibility(View.INVISIBLE);
-                        /*final DatabaseReference delRef = FirebaseDatabase.getInstance().getReference("Notifications");
-                        final Query query = FirebaseDatabase.getInstance().getReference("Notifications")
-                                .orderByChild("type").equalTo("like");
-                        query.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                                    Notifications notifications = snapshot.getValue(Notifications.class);
-                                    if(notifications.getUser().equals(currentUser.getDisplayName()) && notifications.getRef().equals(mData.get(position).getPostKey())){
-                                        delRef.child(notifications.getKey()).removeValue();
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });*/
-
-
                     }
-                });
-            }
-        });
-        holder.btnComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.btnComment.startAnimation(anim);
-                Intent postDetailActivity = new Intent(mContext, CommentActivity.class);
-                /*postDetailActivity.putExtra("postImage",mData.get(position).getFileURL());
-                postDetailActivity.putExtra("description",mData.get(position).getDescription());
-                postDetailActivity.putExtra("userPhoto",mData.get(position).getUserPhoto());*/
-                postDetailActivity.putExtra("postKey",mData.get(position).getPostKey());
-                // will fix this later i forgot to add user name to post object
-                //postDetailActivity.putExtra("userName",mData.get(position).getUsername);
-                /*long timestamp  = (long) mData.get(position).getTimeStamp();
-                postDetailActivity.putExtra("postDate",timestamp) ;*/
-                //Toast.makeText(mContext,"Get lost",Toast.LENGTH_SHORT).show();
-                mContext.startActivity(postDetailActivity);
-            }
-        });
 
-        //Counting the number of comments
-
-
-        //TODO: To download the content attached with a particular post
-        holder.btnDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.btnDownload.startAnimation(anim);
-                if((mData.get(position).getFileURL()).equals("No")){
-                    Toast.makeText(mContext,"No Media/file attached",Toast.LENGTH_SHORT).show();
                 }
-                else{
-                    //Toast.makeText(mContext,"Dfm",Toast.LENGTH_SHORT).show();
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                == PackageManager.PERMISSION_GRANTED) {
-                            // everything goes well : we have permission to access user gallery
-                            //openGallery();
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            final Likes likes = new Likes(currentUser.getUid(),currentUser.getDisplayName(), currentUser.getPhotoUrl().toString());
+            holder.imageHeart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.imageFilledHeart.startAnimation(anim);
+                    LikeReference.setValue(likes).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            holder.imageFilledHeart.setVisibility(View.VISIBLE);
+                            holder.imageHeart.setVisibility(View.INVISIBLE);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showMessage("failed to like : "+e.getMessage());
+                        }
+                    });
+                }
+            });
+
+            holder.imageFilledHeart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    LikeReference.child(currentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            holder.imageHeart.setVisibility(View.VISIBLE);
+                            holder.imageFilledHeart.setVisibility(View.INVISIBLE);
+
+                        }
+                    });
+                }
+            });
+            holder.btnComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.btnComment.startAnimation(anim);
+                    Intent postDetailActivity = new Intent(mContext, CommentActivity.class);
+                    postDetailActivity.putExtra("postKey",mData.get(position).getPostKey());
+                    mContext.startActivity(postDetailActivity);
+                }
+            });
+
+            //Counting the number of comments
+
+
+            //TODO: To download the content attached with a particular post
+            holder.btnDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.btnDownload.startAnimation(anim);
+                    if((mData.get(position).getFileURL()).equals("No")){
+                        Toast.makeText(mContext,"No Media/file attached",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        //Toast.makeText(mContext,"Dfm",Toast.LENGTH_SHORT).show();
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                // everything goes well : we have permission to access user gallery
+                                //openGallery();
+                                startDownload(position);
+                            } else{
+                                ActivityCompat.requestPermissions((Activity) mContext,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_STORAGE_CODE);
+                            }
+                        }else{
                             startDownload(position);
-                        } else{
-                            ActivityCompat.requestPermissions((Activity) mContext,
-                                    new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_STORAGE_CODE);
                         }
-                    }else{
-                        startDownload(position);
                     }
                 }
-            }
-        });
+            });
 
+            //Counting no of comments on single posts
+            DatabaseReference gRef = FirebaseDatabase.getInstance().getReference("Comment").child(mData.get(position).getPostKey());
 
-        holder.btnPopupMenu.setOnClickListener(new View.OnClickListener() {
+            gRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        int countt = (int) dataSnapshot.getChildrenCount();
+                        holder.tvNoOfComments.setText(countt+"");
+                    }else{
+                        holder.tvNoOfComments.setText(" ");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            //Counting no of Likes on single posts
+            DatabaseReference LRef = FirebaseDatabase.getInstance().getReference("Likes").child(mData.get(position).getPostKey());
+
+            LRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        int countt = (int) dataSnapshot.getChildrenCount();
+                        holder.tvNoOfLikes.setText(countt+"");
+                    }else{
+                        holder.tvNoOfLikes.setText(" ");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Creating the instance of PopupMenu
-                PopupMenu popup = new PopupMenu(mContext, holder.btnPopupMenu);
-                //Inflating the Popup using xml file
-                //popup.getMenuInflater().inflate(R.menu.post_option_items, popup.getMenu());
-
-                popup.getMenu().add(Menu.NONE,1,1,"Share...");
-                if(currentUser.getUid().equals(mData.get(position).getUserId()))
-                    popup.getMenu().add(Menu.NONE,2,2,"Delete");
-                popup.getMenu().add(Menu.NONE,3,3,"Report...");
-
-                //registering popup with OnMenuItemClickListener
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        int id = item.getItemId();
-
-                        //noinspection SimplifiableIfStatement
-                        switch (id){
-                            case 1:
-                                Toast.makeText(mContext,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2:
-                                deletePost(mData.get(position).getPostKey(),mData.get(position).getFileURL().trim());
-                                break;
-                            case 3:
-                                Toast.makeText(mContext,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                                break;
-                        }
-                        //Toast.makeText(mContext,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                });
-
-                popup.show(); //showing popup menu
-            }
-        });
-
-        //Counting no of comments on single posts
-        DatabaseReference gRef = FirebaseDatabase.getInstance().getReference("Comment").child(mData.get(position).getPostKey());
-
-        gRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    int countt = (int) dataSnapshot.getChildrenCount();
-                    holder.tvNoOfComments.setText(countt+"");
-                }else{
-                    holder.tvNoOfComments.setText(" ");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //Counting no of Likes on single posts
-        DatabaseReference LRef = FirebaseDatabase.getInstance().getReference("Likes").child(mData.get(position).getPostKey());
-
-        LRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    int countt = (int) dataSnapshot.getChildrenCount();
-                    holder.tvNoOfLikes.setText(countt+"");
-                }else{
-                    holder.tvNoOfLikes.setText(" ");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Intent intent = new Intent(mContext, PostDetailActivity.class);
+                intent.putExtra("postKey", mData.get(position).getPostKey());
+                mContext.startActivity(intent);
             }
         });
 
@@ -350,7 +357,56 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
 
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(time);
-        String date = DateFormat.format("dd-MM-yyyy @ HH:mm",calendar).toString();
+        String tempMonth = DateFormat.format("MM",calendar).toString();
+        switch (tempMonth){
+            case "01":
+                tempMonth = "January";
+                break;
+            case "02":
+                tempMonth = "February";
+                break;
+            case "03":
+                tempMonth = "March";
+                break;
+            case "04":
+                tempMonth = "April";
+                break;
+            case "05":
+                tempMonth = "May";
+                break;
+            case "06":
+                tempMonth = "June";
+                break;
+            case "07":
+                tempMonth = "July";
+                break;
+            case "08":
+                tempMonth = "August";
+                break;
+            case "09":
+                tempMonth = "September";
+                break;
+            case "10":
+                tempMonth = "October";
+                break;
+            case "11":
+                tempMonth = "November";
+                break;
+            case "12":
+                tempMonth = "December";
+                break;
+
+        }
+        String timing = " AM";
+
+        int hour = Integer.parseInt(DateFormat.format("HH",calendar).toString());
+        if(hour>12){
+            hour = hour - 12;
+            timing = " PM";
+        }
+
+        String date = DateFormat.format("dd",calendar).toString() + " " +
+                tempMonth+ " at "+ hour + DateFormat.format(":mm",calendar).toString() + timing;
         return date;
 
 
@@ -410,8 +466,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle, tvUserName, tvDescription, tvSubjectName, tvFileDownloadName, tvPostDate, tvNoOfComments, tvNoOfLikes;
+        TextView tagTeacher, tagStudent;
         ImageView imgPost;
-        ImageView imgPostProfile, imagePost, imageHeart, imageFilledHeart, btnComment, btnDownload, btnPopupMenu;
+        ImageView imgPostProfile, btnReminder, imageHeart, imageFilledHeart, btnComment, btnDownload, btnDelete;
+        RelativeLayout itemsAttachedLayout;
+
         MyViewHolder(View itemView) {
             super(itemView);
 
@@ -419,21 +478,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
             tvUserName = itemView.findViewById(R.id.post_user_name);
             tvDescription = itemView.findViewById(R.id.row_post_desc);
             tvSubjectName = itemView.findViewById(R.id.post_subject_name);
+            itemsAttachedLayout = itemView.findViewById(R.id.items_attached_layout);
             imgPost = itemView.findViewById(R.id.row_post_img);
             tvFileDownloadName = itemView.findViewById(R.id.file_download_name);
             imgPostProfile = itemView.findViewById(R.id.row_post_profile_img);
-            imagePost = itemView.findViewById(R.id.reminderBell);
+            btnReminder = itemView.findViewById(R.id.reminderBell);
             imageHeart = itemView.findViewById(R.id.react_love);
             imageFilledHeart = itemView.findViewById(R.id.un_react_love);
             btnDownload = itemView.findViewById(R.id.downloadPost);
-            btnPopupMenu = itemView.findViewById(R.id.post_options);
+            btnDelete = itemView.findViewById(R.id.post_delete);
             btnComment = itemView.findViewById(R.id.comment);
             tvNoOfComments = itemView.findViewById(R.id.no_of_comments);
             tvNoOfLikes = itemView.findViewById(R.id.no_of_Likes);
             tvPostDate = itemView.findViewById(R.id.post_date);
-
+            tagStudent = itemView.findViewById(R.id.tag_student);
+            tagTeacher = itemView.findViewById(R.id.tag_teacher);
         }
 
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mData.get(position).getSubjectName().equals("announce")){
+            return TYPE_ANNOUNCE;
+        }else{
+            return TYPE_POST;
+        }
     }
 }

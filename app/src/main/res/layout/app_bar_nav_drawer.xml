@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/HomeTabs"
             android:background="@color/colorAccent"
-            app:tabIndicatorColor="#000000">
+            app:tabIndicatorColor="@color/color_white">
 
         </android.support.design.widget.TabLayout>
 

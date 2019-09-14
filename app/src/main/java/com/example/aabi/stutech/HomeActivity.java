@@ -1,6 +1,7 @@
 package com.example.aabi.stutech;
 
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,38 +14,24 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class HomeActivity extends AppCompatActivity{
 
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     TabLayout tabLayout;
+    static String studentSection, designation, userKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        //filterPopup();
-        /*String notificationIntent = getIntent().getStringExtra("notify");
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        // If menuFragment is defined, then this activity was launched with a fragment selection
-        if (notificationIntent != null) {
-
-            // Here we can decide what do to -- perhaps load other parameters from the intent extras such as IDs, etc
-            if (notificationIntent.equals("newNotification")) {
-                NotificationFragment notificationFragment = new NotificationFragment();
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(android.R.id.content, notificationFragment);
-            }
-        } else {
-            // Activity was not launched with a menuFragment selected -- continue as if this activity was opened from a launcher (for example)
-            HomeFragment homeFragment = new HomeFragment();
-            fragmentTransaction.replace(android.R.id.content, homeFragment);
-        }*/
 
         ViewPager viewPager_tab = (ViewPager) findViewById(R.id.HomeContainer);
         setupViewPager(viewPager_tab);
@@ -55,6 +42,42 @@ public class HomeActivity extends AppCompatActivity{
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference newRef = databaseReference.child("UserIDs").child(currentUser.getUid());
+
+        newRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                //editRollNo.setText(tempKey);
+                HomeActivity.designation = user.getDesignation();
+                HomeActivity.userKey = user.getUserKey();
+                if(user.getDesignation().equals("Student")){
+                    final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                         .getReference(user.getDesignation()).child(user.getUserKey()).child("section");
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            HomeActivity.studentSection = dataSnapshot.getValue(String.class);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+
+                //do what you want with the email
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private int[] tabIcons = {

@@ -23,16 +23,69 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <Button
-        android:id="@+id/add_new_attendance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_textview_style"
-        android:padding="40dp"
-        android:text="Add new"
-        android:textSize="30sp"
-        android:visibility="gone"
-        android:layout_centerInParent="true"/>
+
+    <RelativeLayout
+        android:id="@+id/teacher_initial_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_action_bar"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/teacher_total_lectures"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_button_style_rounded"
+                android:text="Total Lectures"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/color_black"
+                android:gravity="center_horizontal"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/marks_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Marks"
+            android:background="@drawable/rounded_background"
+            android:padding="10dp"
+            android:paddingStart="20dp"
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="false"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/color_white"
+            android:visibility="visible"
+            android:paddingEnd="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"/>
+
+        <Button
+            android:id="@+id/attendance_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Attendance"
+            android:background="@drawable/rounded_background"
+            android:padding="10dp"
+            android:paddingStart="20dp"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:textColor="@color/color_white"
+            android:paddingEnd="20dp"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"
+            android:layout_above="@+id/marks_btn"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"/>
+    </RelativeLayout>
+
+
     <LinearLayout
         android:id="@+id/sections_for_teacher"
         android:layout_width="match_parent"
@@ -40,20 +93,30 @@
         android:orientation="vertical"
         android:layout_below="@+id/top_action_bar"
         android:visibility="gone">
-
     </LinearLayout>
 
+
     <LinearLayout
-        android:id="@+id/teacher_attencedance_view"
+        android:id="@+id/marks_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/top_action_bar"
+        android:visibility="gone">
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/teacher_attencedance_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@+id/top_action_bar"
         android:visibility="gone">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/attendanceRV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_above="@+id/done_attendance">
         </android.support.v7.widget.RecyclerView>
 
         <Button
@@ -64,84 +127,143 @@
             android:text="Add this attendance"
             android:textAllCaps="false"
             android:textSize="20sp"
-            android:layout_marginBottom="50dp"
             android:layout_marginEnd="50dp"
             android:layout_marginStart="50dp"
-            android:layout_marginTop="10dp"/>
+            android:textColor="@color/color_white"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentBottom="true"/>
 
-    </LinearLayout>
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/attendance_progress_bar"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="50dp"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/student_attendance_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
+        android:layout_below="@+id/top_action_bar"
         android:layout_margin="10dp"
-        android:gravity="center"
-        android:layout_centerInParent="true">
+        android:background="@drawable/edittext_button_style_rounded">
+
+        <TextView
+            android:id="@+id/attendance_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_button_style_rounded"
+            android:text="Attendance Record"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/color_black"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="10dp"/>
 
         <TextView
             android:id="@+id/lectures_attended_heading"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/lectures_attended"
             android:text="Total Lectures attended"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_below="@+id/attendance_heading"
+            android:layout_alignParentStart="true"
             android:textSize="20sp" />
         <TextView
             android:id="@+id/lectures_attended"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" 
-            android:layout_toEndOf="@+id/lectures_attended_heading"
+            android:layout_height="wrap_content"
             android:text="--"
             android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_below="@+id/attendance_heading"
+            android:layout_alignParentEnd="true"
             android:textSize="20sp"/>
         
         <TextView
             android:id="@+id/line"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/lectures_attended_heading"
-            android:background="@color/color_grey"/>
+            android:background="#f4f4f4"/>
+
         <TextView
             android:id="@+id/total_lectures_heading"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="Total Lecture till today"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_toStartOf="@+id/total_lectures"
+            android:text="Total Lectures till today"
+            android:layout_marginTop="5dp"
             android:layout_below="@+id/line" />
         <TextView
             android:id="@+id/total_lectures"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/total_lectures_heading"
             android:layout_below="@+id/line"
+            android:layout_alignParentEnd="true"
             android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
             android:text="--"
+            android:layout_marginTop="5dp"
             android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/line2"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/total_lectures_heading"
-            android:background="@color/color_grey"/>
+            android:background="#f4f4f4"/>
         <TextView
             android:id="@+id/attendance_in_percentage_heading"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_toStartOf="@+id/attendance_in_percentage"
             android:text="Total Attendance in percentage"
             android:layout_below="@+id/line2" />
         <TextView
             android:id="@+id/attendance_in_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/total_lectures_heading"
             android:layout_below="@+id/line2"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginTop="5dp"
             android:textStyle="bold"
             android:text="--"
             android:textSize="20sp"/>
-        
+
+        <LinearLayout
+            android:id="@+id/student_marks_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/attendance_in_percentage">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_button_style_rounded"
+                android:text="Marks-Sheet"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/color_black"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>
         
     </RelativeLayout>
 

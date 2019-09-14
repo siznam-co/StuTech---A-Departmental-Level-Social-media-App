@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#2F85ED</color>
     <color name="colorPrimaryDark">#2F80ED</color>
+    <color name="colorPrimaryLight">#56CCF2</color>
     <color name="colorAccent">#2F80ED</color>
     <color name="frag_color">#D81B60</color>
     <color name="splashText">#FF1B7AD8</color>

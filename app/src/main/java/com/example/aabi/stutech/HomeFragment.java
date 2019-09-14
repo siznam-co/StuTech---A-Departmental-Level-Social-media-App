@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -63,6 +64,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
 
 public class HomeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -96,7 +98,7 @@ public class HomeFragment extends Fragment {
     static Dialog popPostFilter;
     SwipeRefreshLayout swipeRefreshLayout;
 
-    ImageView popupUserImage,popupPostImage,popupAddBtn, popupAddPictureBtn, popupAddFileBtn, popupCaptureCameraBtn;
+    ImageView popupUserImage,popupPostImage, popupAddPictureBtn, popupAddFileBtn, popupCaptureCameraBtn, fabChatBtn;
     TextView popupTitle,popupDescription, popupFileUploadName;
     static String subjectName;
     ProgressBar popupClickProgress;
@@ -107,7 +109,7 @@ public class HomeFragment extends Fragment {
 
     Spinner spinner;
     String subject;
-    Button fab;
+    Button fab, popupAddBtn;
     ImageView fabPostFilter;
 
     RadioGroup filterRadioGroup;
@@ -143,6 +145,16 @@ public class HomeFragment extends Fragment {
         myProfilePic = fragmentView.findViewById(R.id.my_profile_pic_home);
         Glide.with(HomeFragment.this).load(currentUser.getPhotoUrl()).into(myProfilePic);
 
+        myProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToProfileActivity = new Intent(getActivity(), ProfileActivity.class);
+                goToProfileActivity.putExtra("userID", currentUser.getUid());
+                startActivity(goToProfileActivity);
+            }
+        });
+        fabChatBtn = fragmentView.findViewById(R.id.fab_chat);
+
         fab = fragmentView.findViewById(R.id.fab);
         fabPostFilter = fragmentView.findViewById(R.id.fab_filter);
 
@@ -150,7 +162,6 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
                 onStart();
             }
         });
@@ -162,14 +173,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        swipeRefreshLayout.setRefreshing(true);
 
         DatabaseReference UserIdReference = FirebaseDatabase.getInstance().getReference("UserIDs").child(currentUser.getUid());
 
         UserIdReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
                 //editRollNo.setText(tempKey);
                 DatabaseReference userReference;
                 if(user.getDesignation().equals("Teacher")){
@@ -190,6 +201,15 @@ public class HomeFragment extends Fragment {
                         }
 
                         setSubjectList(subjectList);
+                        fabChatBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent goToChatActivity = new Intent(getActivity(), ChatActivity.class);
+                                goToChatActivity.putExtra("userKey", user.getUserKey());
+                                goToChatActivity.putExtra("designation", user.getDesignation());
+                                startActivity(goToChatActivity);
+                            }
+                        });
                         // Get List Posts from the database
 
                         query1 = FirebaseDatabase.getInstance().getReference("Posts");
@@ -243,7 +263,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void setSubjectList(List<String> subjectList) {
+    private void setSubjectList(final List<String> subjectList) {
         this.subjectList = subjectList;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,8 +356,9 @@ public class HomeFragment extends Fragment {
         popAddPost = new Dialog(getActivity());
         popAddPost.setContentView(R.layout.popup_add_post);
         popAddPost.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
-        popAddPost.getWindow().getAttributes().gravity = Gravity.TOP;
+        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.MATCH_PARENT);
+        popAddPost.getWindow().getAttributes().gravity = Gravity.CENTER_VERTICAL;
+        popAddPost.getWindow().addFlags(FLAG_BLUR_BEHIND);
 
         final Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 

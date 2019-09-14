@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp">
+
+    <TextView
+        android:id="@+id/text_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Outgoing message"
+        android:layout_marginEnd="10dp"
+        android:textSize="20sp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/person_right"
+        android:layout_marginStart="40dp"
+        android:padding="7dp"
+        android:textColor="@color/color_white"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"/>
+
+</RelativeLayout>

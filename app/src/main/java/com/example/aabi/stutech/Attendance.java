@@ -1,20 +1,20 @@
 package com.example.aabi.stutech;
 
 public class Attendance {
-    private String subject, marked;
+    private String userId, marked;
 
-    public Attendance(String currentSubject, String marked) {
-        this.subject = currentSubject;
+    public Attendance(String userId, String marked) {
+        this.userId = userId;
         this.marked = marked;
     }
     public Attendance(){}
 
-    public String getSubject() {
-        return subject;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getMarked() {
